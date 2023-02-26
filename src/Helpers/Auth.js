@@ -14,11 +14,7 @@ const Authenticate = () => {
             Authorization: `Token ${localStorage.getItem("token")}`,
           },
         })
-        .then(function (response) {
-          console.log(response.data.wallet_address);
-          localStorage.setItem("wallet", response?.data?.wallet_address);
-          console.log(localStorage.getItem("wallet"));
-        })
+        .then(function (response) {})
         .catch(function (error) {
           console.log(error);
           if (error.response?.status === 500) {

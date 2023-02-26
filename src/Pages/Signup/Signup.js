@@ -11,7 +11,7 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -25,6 +25,7 @@ function Signup() {
     watch,
     formState: { errors },
   } = useForm();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState("");
   const toast = useToast();
@@ -37,6 +38,7 @@ function Signup() {
         console.log(response);
         setIsLoading(false);
         toast({ title: "Registration Successful", status: "success" });
+        navigate("/login");
       })
       .catch(function (error) {
         if (error.response?.status === 400) {

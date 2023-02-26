@@ -49,6 +49,9 @@ function DashboardLayout(props) {
               <Link to="/wallet">
                 <Text>Wallet</Text>
               </Link>
+              <Link to="/setting">
+                <Text>Settings</Text>
+              </Link>
               <Link to="/login">
                 <Text>Logout</Text>
               </Link>

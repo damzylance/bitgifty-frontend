@@ -14,41 +14,56 @@ import {
   DrawerCloseButton,
   useDisclosure,
   Box,
+  useToast,
+  Spinner,
 } from "@chakra-ui/react";
+import { NumericFormat } from "react-number-format";
+
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../Components/DashboardLayout";
 import Authenticate from "../../../Helpers/Auth";
 import { useForm } from "react-hook-form";
+
 function Wallet() {
   Authenticate();
-
+  const [wallets, setWallets] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [balance, setBalance] = useState(0);
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BASE_URL}transactions/`, {
+      .get(`${process.env.REACT_APP_BASE_URL}wallets/`, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
       })
       .then(function (response) {
-        console.log("Hello");
         console.log(response);
+        if (response.data) {
+          setIsLoading(false);
+          setWallets(response.data);
+        }
       })
       .catch(function (error) {
         console.log(error);
       });
-  });
+  }, []);
   return (
     <DashboardLayout>
       <VStack gap={"10"} width="full">
-        <Flex alignItems="center" width="full" justifyContent={"space-between"}>
+        <Flex
+          wrap={"wrap"}
+          gap="10px"
+          alignItems="center"
+          width="full"
+          justifyContent={"space-between"}
+        >
           <Text fontWeight={"bold"} color="brand.700">
             Wallet
           </Text>
-          <ButtonGroup>
+          <ButtonGroup flexShrink>
             <Button variant={"outline"}>Deposit</Button>
             <Button variant={"outline"}>Withdraw</Button>
-            <Button variant={"outline"}>Transfer</Button>
             <Button variant={"outline"}>Transaction History</Button>
           </ButtonGroup>
         </Flex>
@@ -124,10 +139,35 @@ function Wallet() {
                 Coins
               </Text>
               <VStack width={"full"} gap={"2"} alignContent="flex-start">
-                <CoinRow currency={"USDT"} amount={5000} />
-                <CoinRow currency={"BTC"} amount={0.4} />
-                <CoinRow currency={"ETH"} amount={1} />
-                <CoinRow currency={"LTC"} amount={1000} />
+                {isLoading ? (
+                  <Spinner />
+                ) : (
+                  wallets.map((wallet, index) => {
+                    const { address, network } = wallet;
+
+                    if (network === "Bitcoin") {
+                      wallet.balance =
+                        wallet.info.incoming - wallet.info.outgoing;
+                    } else if (network === "Bnb") {
+                      wallet.balance = wallet.info.balance;
+                    } else if (network === "Celo") {
+                      wallet.balance = wallet.info.cUsd;
+                    } else if (network === "Ethereum") {
+                      wallet.balance = wallet.info.balance;
+                    } else if (network === "Tron") {
+                      wallet.balance = wallet.info.balance / 1000000;
+                    }
+                    return (
+                      <CoinRow
+                        key={index}
+                        currency={network}
+                        address={address}
+                        amount={wallet.balance}
+                        network={network}
+                      />
+                    );
+                  })
+                )}
               </VStack>
             </VStack>
           </VStack>
@@ -155,7 +195,7 @@ function CoinRow(props) {
       <Flex gap={"2"}>
         <Button
           onClick={() => {
-            setPage("widthraw");
+            setPage("withdraw");
             onOpen();
           }}
         >
@@ -171,7 +211,13 @@ function CoinRow(props) {
           Deposit
         </Button>
       </Flex>
-      <WalletModal isOpen={isOpen} onClose={onClose} page={page} />
+      <WalletModal
+        isOpen={isOpen}
+        onClose={onClose}
+        page={page}
+        address={props.address}
+        network={props.network}
+      />
     </Flex>
   );
 }
@@ -179,6 +225,11 @@ const WalletModal = (props) => {
   const userWallet = localStorage.getItem("wallet");
   const btnRef = React.useRef();
   const { register, handleSubmit } = useForm();
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [floatAmount, setFloatAmount] = useState("");
+  const [errors, setErrors] = useState([]);
+  const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <Drawer
@@ -195,13 +246,13 @@ const WalletModal = (props) => {
           <>
             {" "}
             <DrawerHeader color={"brand.700"} textAlign={"center"}>
-              USDT Wallet Address
+              {props.network} Wallet Address
             </DrawerHeader>
             <DrawerBody>
               <Box textAlign={"center"} mt={"100px"}>
                 <VStack>
                   <Text fontSize="lg" color={"brand.500"} fontWeight={"bold"}>
-                    {userWallet}
+                    {props.address}
                   </Text>
                   <Text fontSize={"s"}>
                     Copy wallet address to deposit coin
@@ -212,39 +263,142 @@ const WalletModal = (props) => {
           </>
         )}
 
-        {props.page === "widthraw" && (
+        {props.page === "withdraw" && (
           <>
             <DrawerHeader color={"brand.700"} textAlign={"center"}>
-              Widthraw USDT
+              Withdraw {props.network}
             </DrawerHeader>
             <DrawerBody>
               <Box width={"full"} textAlign={"center"} mt={"100px"}>
                 <form
-                  onSubmit={handleSubmit((data) => {
-                    console.log(data);
+                  onSubmit={handleSubmit(async (data) => {
+                    data.amount = floatAmount;
+                    data.network = props.network;
+                    if (errors.length > 0) {
+                      console.log("error");
+                    } else {
+                      setIsLoading(true);
+                      console.log(data);
+                      await axios
+                        .post(
+                          `${process.env.REACT_APP_BASE_URL}withdraw/`,
+                          data,
+                          {
+                            headers: {
+                              Authorization: `Token ${localStorage.getItem(
+                                "token"
+                              )}`,
+                            },
+                          }
+                        )
+                        .then(function (response) {
+                          console.log(response);
+                          setIsLoading(false);
+                          toast({
+                            title: "Withdrawal Successful",
+                            status: "success",
+                          });
+                        })
+                        .catch(function (error) {
+                          setIsLoading(false);
+                          toast({
+                            title: "An error occured",
+                            status: "warning",
+                          });
+                          console.log(error);
+                        });
+                    }
                   })}
                   style={{ width: "100%" }}
                 >
                   <VStack gap={"20px"}>
-                    <Input
+                    {/* <Input
                       name="amount"
-                      type={"number"}
+                      type={"text"}
                       placeholder="Amount"
-                      {...register("amount")}
+                      {...register("amount", {
+                        onChange: (e) => {
+                          console.log(e.target.value.toLocaleString("en-US"));
+                        },
+                      })}
                       required
-                    />
+                    /> */}
+                    <Box width={"full"}>
+                      <NumericFormat
+                        value={withdrawAmount}
+                        placeholder="Amount"
+                        required
+                        allowLeadingZeros
+                        thousandSeparator=","
+                        style={{
+                          width: "100%",
+                          outline: "2px solid transparent",
+                          border: "1px solid #e2e8f0",
+                          padding: "6px 14px",
+                          borderRadius: "5px",
+                        }}
+                        onChange={(e) => {
+                          let amount = e.target.value;
+                          let floatAmount = parseFloat(
+                            amount.replaceAll(",", "")
+                          );
+                          let inputErrors = [];
+
+                          if (floatAmount < 0.0000005) {
+                            inputErrors.push(
+                              "Minimum withdrawal must be greater than 0.0000005 "
+                            );
+                            setErrors(inputErrors);
+                            console.log(inputErrors);
+                          } else {
+                            setErrors([]);
+                            setFloatAmount(floatAmount.toString());
+                            console.log(floatAmount);
+                          }
+                        }}
+                      />
+                      <Box textAlign={"left"}>
+                        {errors.length > 0 && (
+                          <Text my={"2"} color={"red"} fontSize={"xs"}>
+                            {errors[0]}
+                          </Text>
+                        )}
+                      </Box>
+                    </Box>
                     <Input
-                      name="wallet_address"
-                      placeholder="Wallet address"
-                      {...register("wallet_address")}
+                      name="receiver_address"
+                      placeholder="Receiver address"
+                      {...register("receiver_address")}
                       required
                     />
-                    <Button width={"full"} type="Submit">
+
+                    <Button width={"full"} isLoading={isLoading} type="Submit">
                       {" "}
                       Send
                     </Button>
                   </VStack>
                 </form>
+                {/* <Input
+                  required
+                  value={withdrawAmount}
+                  onChange={(e) => {
+                    let amount = e.target.value.split("");
+
+                    for (let index = 0; index < amount.length; index++) {
+                      const element = amount[index];
+                      if (isNaN(element)) {
+                        amount.pop(element);
+                      }
+                    }
+                    console.log(amount);
+                    let joinedAmount = amount.join("");
+                    if (!isNaN(joinedAmount)) {
+                      setWithdrawAmount(parseFloat(joinedAmount));
+                    } else setWithdrawAmount(0);
+
+                    console.log(withdrawAmount);
+                  }}
+                /> */}
               </Box>
             </DrawerBody>
           </>
@@ -253,36 +407,5 @@ const WalletModal = (props) => {
     </Drawer>
   );
 };
-// const WithdrawModal = (props) => {
-//   const userWallet = localStorage.getItem("wallet");
-//   const btnRef = React.useRef();
-//   return (
-//     <Drawer
-//       isOpen={props.isOpen}
-//       placement="right"
-//       onClose={props.onClose}
-//       finalFocusRef={btnRef}
-//       size={"md"}
-//     >
-//       <DrawerOverlay />
-//       <DrawerContent>
-//         <DrawerCloseButton />
-//         <DrawerHeader color={"brand.700"} textAlign={"center"}>
-//           Widthdraw to external wallet
-//         </DrawerHeader>
 
-//         <DrawerBody>
-//           <Box textAlign={"center"} mt={"100px"}>
-//             <VStack>
-//               <Text fontSize="lg" color={"brand.500"} fontWeight={"bold"}>
-//                 {userWallet}
-//               </Text>
-//               <Text fontSize={"s"}></Text>
-//             </VStack>
-//           </Box>
-//         </DrawerBody>
-//       </DrawerContent>
-//     </Drawer>
-//   );
-// };
 export default Wallet;

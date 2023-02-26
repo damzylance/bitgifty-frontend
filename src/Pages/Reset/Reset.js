@@ -4,11 +4,12 @@ import {
   Text,
   Input,
   Button,
-  Flex,
   useToast,
   Box,
+  Flex,
+  Square,
 } from "@chakra-ui/react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import AuthLayout from "../../Components/AuthLayout";
 import { useForm } from "react-hook-form";
@@ -16,7 +17,7 @@ import axios from "axios";
 
 import React, { useState } from "react";
 
-function Login() {
+function Reset() {
   const navigate = useNavigate();
   const {
     register,
@@ -29,14 +30,14 @@ function Login() {
     console.log(data);
     setIsLoading(true);
     await axios
-      .post(`${process.env.REACT_APP_BASE_URL}auth/login/`, data)
+      .post(`${process.env.REACT_APP_BASE_URL}auth/password/reset`, data)
 
       .then(function (response) {
         localStorage.setItem("token", response.data.key);
         console.log(response);
         setIsLoading(false);
         toast({ title: "Login Successful", status: "success" });
-        navigate("/dashboard");
+        navigate("/change-password");
       })
       .catch(function (error) {
         if (error.response?.data?.non_field_errors) {
@@ -71,7 +72,7 @@ function Login() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <VStack gap={"10"} w="full" alignItems={"flex-start"}>
             <Text color={"brand.700"} fontSize={"xl"} fontWeight={"700"}>
-              Login
+              Reset Password
             </Text>
             <VStack w={"full"} gap={"2"}>
               <Box width={"full"}>
@@ -88,16 +89,28 @@ function Login() {
                   {errors.email?.message}
                 </Text>
               </Box>
-
-              <Input
-                minLength={8}
-                size={"md"}
-                required
-                name={"password"}
-                placeholder="Password"
-                type={"password"}
-                {...register("password")}
-              />
+              <Box width={"full"}>
+                <Input
+                  minLength={3}
+                  name="otp"
+                  size={"md"}
+                  placeholder={"0000"}
+                  type={"number"}
+                  required
+                  {...register("otp", {})}
+                />
+                <Flex>
+                  <Square></Square>
+                  <Square></Square>
+                  <Square></Square>
+                  <Square></Square>
+                  <Square></Square>
+                  <Square></Square>
+                </Flex>
+                <Text color="red" fontSize={"xs"}>
+                  {errors.email?.message}
+                </Text>
+              </Box>
             </VStack>
 
             <VStack width={"full"}>
@@ -105,30 +118,15 @@ function Login() {
                 w={"full"}
                 rightIcon={<ArrowForwardIcon />}
                 isLoading={isLoading}
-                loadingText={"Logging in..."}
+                loadingText={"Submitting"}
                 size="md"
                 colorScheme="brand"
                 justifyContent={"space-between"}
                 variant="solid"
                 type="submit"
               >
-                Login
+                Reset
               </Button>
-              <Flex gap={1}>
-                <Text fontSize={"sm"}>Don't have an account?</Text>
-                <Link to="/register">
-                  <Text fontSize={"sm"} color={"brand.700"}>
-                    Sign Up
-                  </Text>
-                </Link>
-              </Flex>
-              <Flex gap={1}>
-                <Link to="/password-reset">
-                  <Text fontSize={"sm"} color={"brand.700"}>
-                    Forgot password
-                  </Text>
-                </Link>
-              </Flex>
             </VStack>
           </VStack>
         </form>
@@ -137,4 +135,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Reset;
