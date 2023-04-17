@@ -16,6 +16,7 @@ import {
   Box,
   useToast,
   Spinner,
+  HStack,
 } from "@chakra-ui/react";
 import { NumericFormat } from "react-number-format";
 
@@ -24,12 +25,14 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../Components/DashboardLayout";
 import Authenticate from "../../../Helpers/Auth";
 import { useForm } from "react-hook-form";
+import { json, useNavigate } from "react-router-dom";
 
 function Wallet() {
   Authenticate();
   const [wallets, setWallets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState(0);
+
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}wallets/`, {
@@ -38,10 +41,12 @@ function Wallet() {
         },
       })
       .then(function (response) {
-        console.log(response);
+        console.log(response.data);
         if (response.data) {
           setIsLoading(false);
           setWallets(response.data);
+
+          localStorage.setItem("wallets", JSON.stringify(response.data));
         }
       })
       .catch(function (error) {
@@ -72,7 +77,7 @@ function Wallet() {
           py={"12"}
           border={"1px solid #A3BFF5"}
           borderRadius={"12px"}
-          width={"md"}
+          maxWidth="400px"
         >
           <VStack gap={"12"}>
             <Text>Total Balance</Text>
@@ -88,6 +93,7 @@ function Wallet() {
           <VStack alignItems={"flex-start"} width="full" gap={"2"}>
             <Flex
               justifyContent={"space-between"}
+              display={["none", "none", "flex", "flex"]}
               width={"full"}
               bg={"brand.600"}
               py="2"
@@ -151,7 +157,7 @@ function Wallet() {
                     } else if (network === "Bnb") {
                       wallet.balance = wallet.info.balance;
                     } else if (network === "Celo") {
-                      wallet.balance = wallet.info.cUsd;
+                      wallet.balance = wallet.info.celo;
                     } else if (network === "Ethereum") {
                       wallet.balance = wallet.info.balance;
                     } else if (network === "Tron") {
@@ -180,6 +186,8 @@ function Wallet() {
 }
 
 function CoinRow(props) {
+  const navigate = useNavigate();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [page, setPage] = useState("deposit");
   return (
@@ -188,11 +196,18 @@ function CoinRow(props) {
       gap="2"
       justifyContent={"space-between"}
       alignItems={"center"}
-      wrap="wrap"
+      flexDir={["column", "column", "row"]}
     >
-      <Text>{props.currency}</Text>
-      <Text ml={["", "", "150px"]}>{props.amount}</Text>
-      <Flex gap={"2"}>
+      <HStack width={"full"} justifyContent="space-between">
+        <Text>{props.currency}</Text>
+        <Text ml={["", "", "150px"]}>{props.amount}</Text>
+      </HStack>
+
+      <HStack
+        width={"full"}
+        gap={["0", "0", "4"]}
+        justifyContent={["space-between", "space-between", "flex-end"]}
+      >
         <Button
           onClick={() => {
             setPage("withdraw");
@@ -210,7 +225,15 @@ function CoinRow(props) {
         >
           Deposit
         </Button>
-      </Flex>
+        <Button
+          onClick={() => {
+            navigate(`/coin-details/${props.currency.toLowerCase()}`);
+          }}
+          variant={"outline"}
+        >
+          History
+        </Button>
+      </HStack>
       <WalletModal
         isOpen={isOpen}
         onClose={onClose}
@@ -339,21 +362,44 @@ const WalletModal = (props) => {
                         }}
                         onChange={(e) => {
                           let amount = e.target.value;
-                          let floatAmount = parseFloat(
+                          let floatAmount;
+                          floatAmount = parseFloat(
                             amount.replaceAll(",", "")
-                          );
-                          let inputErrors = [];
+                          ).toFixed(18);
+                          if (props.network === "Bitcoin") {
+                            let btcErrors = [];
 
-                          if (floatAmount < 0.0000005) {
-                            inputErrors.push(
-                              "Minimum withdrawal must be greater than 0.0000005 "
-                            );
-                            setErrors(inputErrors);
-                            console.log(inputErrors);
-                          } else {
-                            setErrors([]);
-                            setFloatAmount(floatAmount.toString());
-                            console.log(floatAmount);
+                            if (floatAmount < 0.0005) {
+                              btcErrors.push("Minimum withdrawal is 0.0005 ");
+                              setErrors(btcErrors);
+                              console.log(btcErrors);
+                            } else {
+                              setErrors([]);
+                              setFloatAmount(floatAmount.toString());
+                              console.log(floatAmount);
+                            }
+                          } else if (props.network === "Celo") {
+                            let coinErrors = [];
+                            if (floatAmount < 2) {
+                              coinErrors.push("Minimum withdrawal is 2  ");
+                              setErrors(coinErrors);
+                              console.log(coinErrors);
+                            } else {
+                              setErrors([]);
+                              setFloatAmount(floatAmount.toString());
+                              console.log(floatAmount);
+                            }
+                          } else if (props.network === "Tron") {
+                            let coinErrors = [];
+                            if (floatAmount < 4) {
+                              coinErrors.push("Minimum withdrawal is 2  ");
+                              setErrors(coinErrors);
+                              console.log(coinErrors);
+                            } else {
+                              setErrors([]);
+                              setFloatAmount(floatAmount.toString());
+                              console.log(floatAmount);
+                            }
                           }
                         }}
                       />

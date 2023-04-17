@@ -8,6 +8,7 @@ import Giftcard from "../Pages/Dashboard/Giftcard";
 import Wallet from "../Pages/Dashboard/Wallet";
 import History from "../Pages/Dashboard/History";
 import Reset from "../Pages/Reset/Reset";
+import CoinDetails from "../Pages/Dashboard/Wallet/Wallet";
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
         <Route exact path="/dashboard" element={<Dashboard />} />
         <Route exact path="/giftcard" element={<Giftcard />} />
         <Route exact path="/wallet" element={<Wallet />} />
+        <Route exact path="/coin-details/:currency" element={<CoinDetails />} />
         <Route exact path="/history" element={<History />} />
         <Route exact path="/history" element={<History />} />
         <Route exact path="/setting" element={<UserSetting />} />

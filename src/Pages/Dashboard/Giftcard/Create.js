@@ -97,14 +97,14 @@ function Create() {
             <Select required name="currency" {...register("currency")}>
               <option value={"usdt"}>USDT</option>
               <option value="btc">BTC</option>
-              <option value={"bnb"}>BNB</option>
+              <option value={"celo"}>Celo</option>
               <option value={"eth"}>ETH</option>
             </Select>
           </FormControl>
           <VStack gap={"2"} width="full" alignItems="flex-start">
             <FormControl>
               <FormLabel>Enter Amount</FormLabel>
-              <Input required type={"number"} min={0} {...register("amount")} />
+              <Input required type={"number"} {...register("amount")} />
             </FormControl>
             <Flex
               justifyContent={"space-between"}
