@@ -10,10 +10,12 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { RxHamburgerMenu, RxCross1, RxCaretRight } from "react-icons/rx";
+import Authenticate from "../../Helpers/Auth";
 
 import { Link } from "react-router-dom";
 
 function DashboardLayout(props) {
+  Authenticate();
   const [openMenu, setOpenMenu] = useState(false);
   const showMobileMenu = () => {
     setOpenMenu(!openMenu);

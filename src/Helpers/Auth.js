@@ -14,22 +14,28 @@ const Authenticate = () => {
             Authorization: `Token ${localStorage.getItem("token")}`,
           },
         })
-        .then(function (response) {})
+        .then(function (response) {
+          console.log(response);
+        })
         .catch(function (error) {
           console.log(error);
           if (error.response?.status === 500) {
             toast({ title: "Server error", status: "error" });
-          }
-          if (error.response?.status === 403) {
+          } else if (error.response?.status === 403) {
             toast({
               title: "session expired. Please sign in again",
               status: "warning",
             });
             navigate("/login");
-          }
-          if (error.response?.status === 401) {
+          } else if (error.response?.status === 401) {
             toast({
               title: "Unautorised. Please sign in again",
+              status: "warning",
+            });
+            navigate("/login");
+          } else {
+            toast({
+              title: "An error occured",
               status: "warning",
             });
             navigate("/login");

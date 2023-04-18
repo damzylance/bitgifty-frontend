@@ -134,7 +134,7 @@ function Create() {
             style={{ width: "127px", height: "117px", borderRadius: "16px" }}
           />
           <Image
-            src="/assets/images/giftcard-2.jpg"
+            src="/assets/images/giftcard-3.jpg"
             style={{
               width: "127px",
               height: "117px",
@@ -143,8 +143,13 @@ function Create() {
             }}
           />
           <Image
-            src="/assets/images/giftcard-1.png"
-            style={{ width: "127px", height: "117px", borderRadius: "16px" }}
+            src="/assets/images/giftcard-4.jpg"
+            style={{
+              width: "127px",
+              height: "117px",
+              borderRadius: "16px",
+              objectFit: "cover",
+            }}
           />
           <Image
             src="/assets/images/giftcard-1.png"
