@@ -8,6 +8,7 @@ import {
   SimpleGrid,
   FormControl,
   FormLabel,
+  FormErrorMessage,
   Input,
   Select,
   Box,
@@ -16,11 +17,49 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { motion } from "framer-motion";
+
 function Create() {
-  const { register, handleSubmit } = useForm();
+  const wallets = JSON.parse(localStorage.getItem("wallets"));
+  const [walletIndex, setWalletIndex] = useState(0);
+  const [amountMin, setAmountMin] = useState(0.0003);
+  const [balance, setBalance] = useState(
+    wallets[0].info.incoming - wallets[walletIndex].info.outgoing
+  );
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+  const handleCurrencyChange = (e) => {
+    const network = `${e.target.value
+      .slice(0, 1)
+      .toUpperCase()}${e.target.value.slice(1, e.target.value.length)}`;
+    console.log(network);
+    for (let index = 0; index < wallets.length; index++) {
+      if (wallets[index].network === network) {
+        if (wallets[index].network === "Bitcoin") {
+          setBalance(
+            wallets[index].info.incoming - wallets[index].info.outgoing
+          );
+          setAmountMin(0.0003);
+        } else if (wallets[index].network === "Celo") {
+          setBalance(wallets[index].info.celo);
+          setAmountMin(5);
+        } else if (wallets[index].network === "Ethereum") {
+          setAmountMin(0.003);
+          setBalance(wallets[index].info.balance);
+        } else if (wallets[index].network === "Tron") {
+          setBalance(wallets[index].info.balance / 1000000);
+          setAmountMin(5);
+        }
+      }
+    }
+  };
   const onSubmit = async (data) => {
+    data.fees = 0.02 * data.amount;
     console.log(data);
     setIsLoading(true);
     await axios
@@ -44,32 +83,64 @@ function Create() {
         console.log(error);
         setIsLoading(false);
       });
-    console.log(data);
   };
   return (
-    <Flex width={"full"} my={10}>
+    <Flex
+      width={"full"}
+      my={10}
+      gap={["20px", "20px", 0]}
+      flexWrap={["wrap", "wrap", "nowrap"]}
+    >
       <VStack width={"full"} alignItems={"flex-start"} gap={"5"}>
-        <Image src="/assets/images/giftcard-1.png" width={"300px"} />
+        <Box
+          as={motion.div}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition="1s"
+        >
+          <Image
+            src="/assets/images/giftcard-2.jpg"
+            width={["full", "full", "300px"]}
+            height={"300px"}
+            objectFit={"cover"}
+            borderRadius={"10px"}
+          />
+        </Box>
 
         <Text color={"brand.700"} fontSize={"lg"} fontWeight={700}>
-          Similar
+          Giftcard Designs
         </Text>
         <SimpleGrid columns={3} spacing="4">
           <Image
             src="/assets/images/giftcard-1.png"
-            style={{ width: "127px", height: "117px", borderRadius: "16px" }}
+            style={{
+              width: "127px",
+              height: "117px",
+              borderRadius: "16px",
+              objectFit: "cover",
+            }}
+          />
+          <Image
+            src="/assets/images/giftcard-2.jpg"
+            style={{
+              width: "127px",
+              height: "117px",
+              borderRadius: "16px",
+              objectFit: "cover",
+            }}
           />
           <Image
             src="/assets/images/giftcard-1.png"
             style={{ width: "127px", height: "117px", borderRadius: "16px" }}
           />
           <Image
-            src="/assets/images/giftcard-1.png"
-            style={{ width: "127px", height: "117px", borderRadius: "16px" }}
-          />
-          <Image
-            src="/assets/images/giftcard-1.png"
-            style={{ width: "127px", height: "117px", borderRadius: "16px" }}
+            src="/assets/images/giftcard-2.jpg"
+            style={{
+              width: "127px",
+              height: "117px",
+              borderRadius: "16px",
+              objectFit: "cover",
+            }}
           />
           <Image
             src="/assets/images/giftcard-1.png"
@@ -89,22 +160,42 @@ function Create() {
         <VStack
           color={"brand.600"}
           gap="10"
-          width={"80%"}
+          width={["full", "full", "80%"]}
           alignItems={"flex-start"}
         >
           <FormControl>
             <FormLabel>Select Currency</FormLabel>
-            <Select required name="currency" {...register("currency")}>
-              <option value={"usdt"}>USDT</option>
-              <option value="btc">BTC</option>
-              <option value={"celo"}>Celo</option>
-              <option value={"eth"}>ETH</option>
+            <Select
+              required
+              name="currency"
+              {...register("currency", { onChange: handleCurrencyChange })}
+            >
+              {wallets.map((wallet, index) => {
+                return (
+                  <option value={wallet.network.toLowerCase()} key={index}>
+                    {wallet.network}
+                  </option>
+                );
+              })}
             </Select>
           </FormControl>
           <VStack gap={"2"} width="full" alignItems="flex-start">
-            <FormControl>
+            <FormControl isInvalid={errors.amount}>
               <FormLabel>Enter Amount</FormLabel>
-              <Input required type={"number"} {...register("amount")} />
+              <Input
+                required
+                type={"number"}
+                {...register("amount", {
+                  max: { value: balance, message: "Insufficient funds" },
+                  min: {
+                    value: amountMin,
+                    message: `Minimum amount is ${amountMin}`,
+                  },
+                })}
+              />
+              <FormErrorMessage>
+                {errors.amount && errors.amount.message}
+              </FormErrorMessage>
             </FormControl>
             <Flex
               justifyContent={"space-between"}
@@ -158,7 +249,7 @@ function Create() {
             </Flex>
             <Flex color="brand.300" gap={2}>
               <Text>Wallet Balance:</Text>
-              <Text>0.56btc</Text>
+              <Text>{balance}</Text>
             </Flex>
           </VStack>
           <FormControl>

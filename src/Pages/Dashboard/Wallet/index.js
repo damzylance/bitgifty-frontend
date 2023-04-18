@@ -66,10 +66,16 @@ function Wallet() {
           <Text fontWeight={"bold"} color="brand.700">
             Wallet
           </Text>
-          <ButtonGroup flexShrink>
-            <Button variant={"outline"}>Deposit</Button>
-            <Button variant={"outline"}>Withdraw</Button>
-            <Button variant={"outline"}>Transaction History</Button>
+          <ButtonGroup>
+            <Button size={["sm", "sm", "md"]} variant={"outline"}>
+              Deposit
+            </Button>
+            <Button size={["sm", "sm", "md"]} variant={"outline"}>
+              Withdraw
+            </Button>
+            <Button size={["sm", "sm", "md"]} variant={"outline"}>
+              Transaction History
+            </Button>
           </ButtonGroup>
         </Flex>
         <Container
