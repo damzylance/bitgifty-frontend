@@ -7,8 +7,6 @@ import Giftcard from "./Giftcard";
 import Authenticate from "../../../Helpers/Auth";
 
 function History() {
-  Authenticate();
-
   const [page, setPage] = useState("giftcard");
 
   return (

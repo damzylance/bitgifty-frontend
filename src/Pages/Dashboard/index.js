@@ -3,9 +3,7 @@ import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 
 import DashboardLayout from "../../Components/DashboardLayout";
-import Authenticate from "../../Helpers/Auth";
 function Dashboard() {
-  Authenticate();
   const navigate = useNavigate();
   // useEffect(() => {
   //   const user = async () => {

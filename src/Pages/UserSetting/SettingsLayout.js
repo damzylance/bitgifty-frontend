@@ -2,7 +2,6 @@ import { Box, Flex, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../Components/DashboardLayout";
-import Authenticate from "../../Helpers/Auth";
 
 function SettingsLayout(props) {
   const navStyle = {
@@ -13,7 +12,6 @@ function SettingsLayout(props) {
     background: ["#103d96", "#103d96", "transparent"],
     color: ["#fff", "#fff", "#103d96"],
   };
-  Authenticate();
   return (
     <DashboardLayout>
       <Flex

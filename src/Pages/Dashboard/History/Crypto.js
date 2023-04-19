@@ -229,7 +229,7 @@ function Crypto() {
                     transaction.rawData.contract[0].parameter.value.amount /
                     1000000;
                   let date = new Date(transaction.rawData.timestamp);
-                  let scanner = "https://shasta.tronscan.org/#/transaction";
+                  let scanner = "https://shasta.tronscan.org/#/transaction/";
                   let day = date
                     .toLocaleDateString("en-NG")
                     .toString()

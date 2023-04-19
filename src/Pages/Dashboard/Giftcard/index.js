@@ -6,8 +6,6 @@ import Reedeem from "./Reedeem";
 import Create from "./Create";
 import Authenticate from "../../../Helpers/Auth";
 function Giftcard() {
-  Authenticate();
-
   const [page, setPage] = useState("buy");
 
   return (

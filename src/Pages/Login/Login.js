@@ -45,6 +45,11 @@ function Login() {
             status: "error",
           });
           console.log(error.response?.data?.non_field_errors[0]);
+        } else {
+          toast({
+            title: "An error occured",
+            status: "error",
+          });
         }
 
         console.log(error);

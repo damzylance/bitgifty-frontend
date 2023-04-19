@@ -25,10 +25,9 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../Components/DashboardLayout";
 import Authenticate from "../../../Helpers/Auth";
 import { useForm } from "react-hook-form";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Wallet() {
-  Authenticate();
   const [wallets, setWallets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState(0);
@@ -95,7 +94,6 @@ function Wallet() {
           </VStack>
         </Container>
         <VStack alignItems={"flex-start"} width="full" gap={"10"}>
-          <Input placeholder="search coin" width={"sm"} type={"text"} />
           <VStack alignItems={"flex-start"} width="full" gap={"2"}>
             <Flex
               justifyContent={"space-between"}
