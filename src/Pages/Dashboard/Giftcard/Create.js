@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Flex,
@@ -14,6 +14,7 @@ import {
   Box,
   Textarea,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -21,18 +22,22 @@ import { motion } from "framer-motion";
 
 function Create() {
   const wallets = JSON.parse(localStorage.getItem("wallets"));
-  const [walletIndex, setWalletIndex] = useState(0);
-  const [amountMin, setAmountMin] = useState(0.0003);
-  const [balance, setBalance] = useState(
-    wallets[0].info.incoming - wallets[walletIndex].info.outgoing
-  );
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+  const [walletIndex, setWalletIndex] = useState(0);
+  const [amountMin, setAmountMin] = useState(0.0003);
+  const [balance, setBalance] = useState(
+    wallets[0].info.incoming - wallets[walletIndex].info.outgoing
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [templatesLoading, setTemplatesLoading] = useState(true);
+  const [templates, setTemplates] = useState([]);
+  const [template, setTemplate] = useState();
+
   const handleCurrencyChange = (e) => {
     const network = `${e.target.value
       .slice(0, 1)
@@ -47,7 +52,7 @@ function Create() {
           setAmountMin(0.0003);
         } else if (wallets[index].network === "Celo") {
           setBalance(wallets[index].info.celo);
-          setAmountMin(5);
+          setAmountMin(2);
         } else if (wallets[index].network === "Ethereum") {
           setAmountMin(0.003);
           setBalance(wallets[index].info.balance);
@@ -58,12 +63,33 @@ function Create() {
       }
     }
   };
+  const fetchCardTemplates = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_BASE_URL}gift_cards/images`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((response) => {
+        setTemplatesLoading(false);
+        setTemplates(response.data.results);
+        setTemplate({
+          link: response.data.results[0].link,
+          id: response.data.results[0].id,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const onSubmit = async (data) => {
-    data.fees = 0.02 * data.amount;
+    data.image = template.id;
+    data.amount = parseFloat(data.amount);
+    data.quantity = parseInt(data.quantity);
     console.log(data);
     setIsLoading(true);
     await axios
-      .post(`${process.env.REACT_APP_BASE_URL}gift_cards/`, data, {
+      .post(`${process.env.REACT_APP_BASE_URL}gift_cards/create`, data, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
@@ -84,6 +110,9 @@ function Create() {
         setIsLoading(false);
       });
   };
+  useEffect(() => {
+    fetchCardTemplates();
+  }, []);
   return (
     <Flex
       width={"full"}
@@ -92,69 +121,58 @@ function Create() {
       flexWrap={["wrap", "wrap", "nowrap"]}
     >
       <VStack width={"full"} alignItems={"flex-start"} gap={"5"}>
-        <Box
-          as={motion.div}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition="1s"
-        >
-          <Image
-            src="/assets/images/giftcard-2.jpg"
-            width={["full", "full", "300px"]}
-            height={"300px"}
-            objectFit={"cover"}
-            borderRadius={"10px"}
-          />
-        </Box>
+        {templatesLoading ? (
+          <Spinner />
+        ) : templates.length > 0 ? (
+          <Box
+            as={motion.div}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition="5s"
+          >
+            <Image
+              src={`${template.link}`}
+              width={["full", "full", "300px"]}
+              height={"300px"}
+              objectFit={"cover"}
+              borderRadius={"10px"}
+            />
+          </Box>
+        ) : (
+          "No template"
+        )}
 
         <Text color={"brand.700"} fontSize={"lg"} fontWeight={700}>
           Giftcard Designs
         </Text>
         <SimpleGrid columns={3} spacing="4">
-          <Image
-            src="/assets/images/giftcard-1.png"
-            style={{
-              width: "127px",
-              height: "117px",
-              borderRadius: "16px",
-              objectFit: "cover",
-            }}
-          />
-          <Image
-            src="/assets/images/giftcard-2.jpg"
-            style={{
-              width: "127px",
-              height: "117px",
-              borderRadius: "16px",
-              objectFit: "cover",
-            }}
-          />
-          <Image
-            src="/assets/images/giftcard-1.png"
-            style={{ width: "127px", height: "117px", borderRadius: "16px" }}
-          />
-          <Image
-            src="/assets/images/giftcard-3.jpg"
-            style={{
-              width: "127px",
-              height: "117px",
-              borderRadius: "16px",
-              objectFit: "cover",
-            }}
-          />
-          <Image
-            src="/assets/images/giftcard-4.jpg"
-            style={{
-              width: "127px",
-              height: "117px",
-              borderRadius: "16px",
-              objectFit: "cover",
-            }}
-          />
-          <Image
-            src="/assets/images/giftcard-1.png"
-            sx={{ width: "127px", height: "117px", borderRadius: "16px" }}
-          />
+          {templatesLoading ? (
+            <Spinner />
+          ) : templates.length > 0 ? (
+            templates.map((image) => {
+              return (
+                <Image
+                  key={image.id}
+                  src={`${image.link}`}
+                  style={{
+                    width: "127px",
+                    height: "117px",
+                    borderRadius: "16px",
+                    objectFit: "cover",
+                    cursor: "pointer",
+                    border:
+                      image.link === template.link ? "1px solid blue" : "",
+                  }}
+                  _hover={{ border: "1px solid blue" }}
+                  onClick={() => {
+                    setTemplate({ link: image.link, id: image.id });
+                  }}
+                />
+              );
+            })
+          ) : (
+            <Text>No template available</Text>
+          )}
         </SimpleGrid>
       </VStack>
       <form

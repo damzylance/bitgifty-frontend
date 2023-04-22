@@ -10,6 +10,17 @@ import {
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../Components/DashboardLayout";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+const transitionStyle = {
+  borderRadius: "10px",
+  transition:
+    "background-position .3s cubic-bezier(.47, .1, 1, .63), .2s linear",
+  backgroundPosition: "-50% 100%",
+  backgroundImage:
+    "linear-gradient(90deg,#f5f6f7 0%, #fff 70%,#fff 70%,#fff 70%)",
+  backgroundSize: "300%",
+  transitionDelay: "0.15s, 0.015s",
+};
 
 const Wallet = () => {
   const navigate = useNavigate();
@@ -19,16 +30,6 @@ const Wallet = () => {
 
     backgroundSize: "200%",
   };
-  const transitionStyle = {
-    borderRadius: "10px",
-    transition:
-      "background-position .3s cubic-bezier(.47, .1, 1, .63), .2s linear",
-    backgroundPosition: "-50% 100%",
-    backgroundImage:
-      "linear-gradient(90deg,#f5f6f7 0%, #fff 70%,#fff 70%,#fff 70%)",
-    backgroundSize: "300%",
-    transitionDelay: "0.15s, 0.015s",
-  };
 
   const [page, setPage] = useState("deposits");
   const { currency } = useParams();
@@ -37,13 +38,33 @@ const Wallet = () => {
   const [transactions, setTransactions] = useState([
     { amount: 0.2, date: "14/05/2022 00:32:14", status: "Processed" },
   ]);
+  const [isLoading, setIsLoading] = useState(true);
   const [count, setCount] = useState(0);
 
   console.log(paramsMatch);
+
   useEffect(() => {
     if (!paramsMatch) {
       navigate("/wallet");
     }
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}transactions/${currency}`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then(function (response) {
+        console.log(response.data);
+        if (response.data) {
+          setIsLoading(false);
+          setTransactions(response.data);
+
+          localStorage.setItem("wallets", JSON.stringify(response.data));
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }, [navigate, paramsMatch]);
   return (
     <>

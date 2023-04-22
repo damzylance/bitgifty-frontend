@@ -28,7 +28,7 @@ function UserSetting() {
   const [user, setUser] = useState({});
   const fetchUser = async () => {
     await axios
-      .get(`${process.env.REACT_APP_BASE_URL}auth/user/`, {
+      .get(`${process.env.REACT_APP_BASE_URL}/user/`, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },

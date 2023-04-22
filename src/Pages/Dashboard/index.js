@@ -1,7 +1,7 @@
 import { Box, Flex, Image, VStack, Text, Button } from "@chakra-ui/react";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
-
+import { motion } from "framer-motion";
 import DashboardLayout from "../../Components/DashboardLayout";
 function Dashboard() {
   const navigate = useNavigate();
@@ -49,7 +49,14 @@ function Dashboard() {
         my="20"
         flexDir={["column", "column", "row"]}
       >
-        <Box w={"full"} height="full" p={2}>
+        <Box
+          as={motion.div}
+          animate={{ rotate: 360, transition: { duration: 1 } }}
+          w={"full"}
+          height="full"
+          p={2}
+          whileHover={{ scale: 1.1, transition: { duration: 0.5 } }}
+        >
           <Image width={"500px"} src="/assets/images/heroimage2.png" />
         </Box>
         <VStack
@@ -80,7 +87,7 @@ function Dashboard() {
               rightIcon={<ArrowForwardIcon />}
               onClick={() => navigate("/giftcard")}
             >
-              Send Gift Card
+              Create Gift Card
             </Button>
             <Button
               width={"80%"}

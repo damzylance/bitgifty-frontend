@@ -18,7 +18,7 @@ function Giftcard() {
           variant={page === "buy" ? "solid" : "outline"}
           size={"lg"}
         >
-          Buy
+          Create
         </Button>
         <Divider
           borderColor="brand.700"

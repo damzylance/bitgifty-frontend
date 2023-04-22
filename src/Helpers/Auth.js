@@ -15,7 +15,6 @@ const Authenticate = (props) => {
         },
       })
       .then(function (response) {
-        console.log(response);
         setIsActive(true);
       })
       .catch(function (error) {
