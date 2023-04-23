@@ -89,7 +89,7 @@ function Create() {
     console.log(data);
     setIsLoading(true);
     await axios
-      .post(`${process.env.REACT_APP_BASE_URL}gift_cards/create`, data, {
+      .post(`${process.env.REACT_APP_BASE_URL}gift_cards/create/`, data, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
@@ -97,7 +97,7 @@ function Create() {
       .then(function (response) {
         console.log(response);
         setIsLoading(false);
-        toast({ title: "Registration Successful", status: "success" });
+        toast({ title: "Giftcard created", status: "success" });
       })
       .catch(function (error) {
         if (error.response?.status === 400) {
@@ -207,6 +207,7 @@ function Create() {
               <FormLabel>Enter Amount</FormLabel>
               <Input
                 required
+                name="amount"
                 type={"number"}
                 {...register("amount", {
                   max: { value: balance, message: "Insufficient funds" },

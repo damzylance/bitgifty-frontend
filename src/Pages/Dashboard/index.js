@@ -51,13 +51,14 @@ function Dashboard() {
       >
         <Box
           as={motion.div}
-          animate={{ rotate: 360, transition: { duration: 1 } }}
+          transform={"rotate(90deg)"}
+          animate={{ rotate: 90, transition: { duration: 0.5 } }}
           w={"full"}
           height="full"
           p={2}
           whileHover={{ scale: 1.1, transition: { duration: 0.5 } }}
         >
-          <Image width={"500px"} src="/assets/images/heroimage2.png" />
+          <Image width={"500px"} src="/assets/images/heroimage3.png" />
         </Box>
         <VStack
           w={"full"}

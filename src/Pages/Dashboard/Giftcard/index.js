@@ -4,18 +4,18 @@ import { Button, Divider, Flex } from "@chakra-ui/react";
 import DashboardLayout from "../../../Components/DashboardLayout";
 import Reedeem from "./Reedeem";
 import Create from "./Create";
-import Authenticate from "../../../Helpers/Auth";
+import MyCards from "./MyCards";
 function Giftcard() {
-  const [page, setPage] = useState("buy");
+  const [page, setPage] = useState("create");
 
   return (
     <DashboardLayout>
       <Flex height={"50px"} gap={5}>
         <Button
           onClick={() => {
-            setPage("buy");
+            setPage("create");
           }}
-          variant={page === "buy" ? "solid" : "outline"}
+          variant={page === "create" ? "solid" : "outline"}
           size={"lg"}
         >
           Create
@@ -30,15 +30,38 @@ function Giftcard() {
         />
         <Button
           onClick={() => {
-            setPage("sell");
+            setPage("redeem");
           }}
           size="lg"
-          variant={page === "sell" ? "solid" : "outline"}
+          variant={page === "redeem" ? "solid" : "outline"}
         >
           Reedeem
         </Button>
+        <Divider
+          borderColor="brand.700"
+          borderLeftWidth={2}
+          bg="brand.100"
+          opacity={"none"}
+          variant={"solid"}
+          orientation="vertical"
+        />
+        <Button
+          onClick={() => {
+            setPage("cards");
+          }}
+          size="lg"
+          variant={page === "cards" ? "solid" : "outline"}
+        >
+          My Cards
+        </Button>
       </Flex>
-      {page === "buy" ? <Create /> : <Reedeem />}
+      {page === "create" ? (
+        <Create />
+      ) : page === "redeem" ? (
+        <Reedeem />
+      ) : (
+        <MyCards />
+      )}
     </DashboardLayout>
   );
 }
