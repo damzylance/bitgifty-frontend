@@ -21,7 +21,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 
 function Create() {
-  const wallets = JSON.parse(localStorage.getItem("wallets"));
+  const [wallets, setWallets] = useState([]);
   const {
     register,
     handleSubmit,
@@ -30,14 +30,36 @@ function Create() {
   const toast = useToast();
   const [walletIndex, setWalletIndex] = useState(0);
   const [amountMin, setAmountMin] = useState(0.0003);
-  const [balance, setBalance] = useState(
-    wallets[0].info.incoming - wallets[walletIndex].info.outgoing
-  );
+  const [balance, setBalance] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [templatesLoading, setTemplatesLoading] = useState(true);
   const [templates, setTemplates] = useState([]);
   const [template, setTemplate] = useState();
+  const fetchWallets = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_BASE_URL}wallets/`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then(function (response) {
+        console.log(response.data);
+        if (response.data) {
+          console.log(response.data);
+          setIsLoading(false);
+          setBalance(
+            response.data[0].info.incoming -
+              response.data[walletIndex].info.outgoing
+          );
+          setWallets(response.data);
 
+          localStorage.setItem("wallets", JSON.stringify(response.data));
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   const handleCurrencyChange = (e) => {
     const network = `${e.target.value
       .slice(0, 1)
@@ -112,6 +134,7 @@ function Create() {
   };
   useEffect(() => {
     fetchCardTemplates();
+    fetchWallets();
   }, []);
   return (
     <Flex

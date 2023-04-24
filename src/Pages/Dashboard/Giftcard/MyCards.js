@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { CopyIcon } from "@chakra-ui/icons";
+import { motion } from "framer-motion";
 import {
   Box,
   Container,
@@ -8,15 +10,22 @@ import {
   SimpleGrid,
   Spinner,
   Text,
-  Toast,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalOverlay,
+  useToast,
   VStack,
+  useDisclosure,
+  Button,
 } from "@chakra-ui/react";
 
 function MyCards() {
   const [cards, setCards] = useState([]);
   const [templates, setTemplates] = useState([]);
-
   const [loading, setLoading] = useState(true);
+
   const fetchCards = async () => {
     await axios
       .get(`${process.env.REACT_APP_BASE_URL}gift_cards/create/`, {
@@ -32,6 +41,7 @@ function MyCards() {
         console.log(error);
       });
   };
+
   const fetchCardTemplates = async () => {
     await axios
       .get(`${process.env.REACT_APP_BASE_URL}gift_cards/images`, {
@@ -74,6 +84,8 @@ function MyCards() {
                 amount={card.amount}
                 image={templates.length > 0 ? link : ""}
                 currency={card.currency}
+                code={card.code}
+                status={card.status}
               />
             );
           })
@@ -85,6 +97,8 @@ function MyCards() {
   );
 }
 const Card = (props) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <VStack
       width={"full"}
@@ -94,6 +108,7 @@ const Card = (props) => {
       borderRadius={"10px"}
       gap={"5"}
       padding={"10px"}
+      onClick={onOpen}
     >
       <Image
         src={props.image}
@@ -104,11 +119,103 @@ const Card = (props) => {
       />
       <HStack width={"full"} justifyContent={"space-between"}>
         <Text>Amount</Text>
-        <Text fontWeight={"bold"} fontSize={"lg"}>
+        <Text fontWeight={"bold"} fontSize={["md", "md", "lg"]}>
           {props.amount} {props.currency}
         </Text>
       </HStack>
+      <CardModal
+        onClose={onClose}
+        isOpen={isOpen}
+        image={props.image}
+        amount={props.amount}
+        currency={props.currency}
+        code={props.code}
+        status={props.status}
+      />
     </VStack>
+  );
+};
+const CardModal = (props) => {
+  const [showCode, setShowCode] = useState(false);
+  const toast = useToast();
+
+  return (
+    <Modal
+      isCentered
+      onClose={props.onClose}
+      isOpen={props.isOpen}
+      motionPreset="slideInBottom"
+      size={"lg"}
+    >
+      <ModalOverlay
+        bg="blackAlpha.100"
+        backdropFilter="blur(20px) hue-rotate(10deg)"
+      />
+      <ModalContent border={"1px solid #cdcdd8"}>
+        <Box
+          width={"0px"}
+          height={"10px"}
+          borderLeft={"70px solid transparent"}
+          borderRight={"70px solid transparent"}
+          borderBottom={`70px solid ${
+            props.status === "generated" ? "green" : "red"
+          }`}
+          transform={"rotate(-45deg)"}
+          position={"relative"}
+          left={"-45px"}
+          top={"-15px"}
+        ></Box>
+        <Text
+          position={"absolute"}
+          left={"0%"}
+          fontWeight={"500"}
+          top={"4.5%"}
+          transform={"rotate(-45deg)"}
+          color={"#fff"}
+        >
+          {props.status === "generated" ? "Active" : "Redeemed"}
+        </Text>
+        <ModalHeader textAlign={"center"}>View Gift Card</ModalHeader>
+        <ModalBody>
+          <Image src={props.image} />
+          <HStack width={"full"} justifyContent={"center"} gap={"10px"}>
+            <Text>Amount:</Text>
+            <HStack>
+              <Text fontSize={"4xl"}>{props.amount}</Text>
+              <Text>{props.currency}</Text>
+            </HStack>
+          </HStack>
+          <Box width={"full"}>
+            {showCode === true && (
+              <Text textAlign={"center"} fontSize={"4xl"}>
+                {props.code}
+              </Text>
+            )}
+            {showCode === false && (
+              <Text textAlign={"center"} fontSize={"4xl"}>
+                ############
+              </Text>
+            )}
+          </Box>
+          <HStack justifyContent={"center"} gap={"20px"}>
+            <Button onClick={() => setShowCode(!showCode)}>
+              {showCode ? "Hide code" : "Reveal Code"}
+            </Button>
+            {showCode && (
+              <CopyIcon
+                fontSize={"2xl"}
+                cursor={"pointer"}
+                _hover={{ color: "blue" }}
+                onClick={() => {
+                  navigator.clipboard.writeText(props.code);
+                  toast({ title: "Code copied", status: "success" });
+                }}
+              />
+            )}
+          </HStack>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };
 export default MyCards;

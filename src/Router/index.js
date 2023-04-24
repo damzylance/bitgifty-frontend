@@ -14,6 +14,7 @@ function Router() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route exact path="/" element={<Dashboard />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/register" element={<Signup />} />
         <Route exact path="/password-reset" element={<Reset />} />

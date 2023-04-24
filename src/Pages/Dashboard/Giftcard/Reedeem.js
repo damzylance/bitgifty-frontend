@@ -62,7 +62,7 @@ function Reedeem() {
               size={"lg"}
               bg="bg1"
               required
-              minLength={6}
+              minLength={5}
               name="code"
               {...register("code")}
             />
@@ -82,3 +82,8 @@ function Reedeem() {
 }
 
 export default Reedeem;
+
+// Naira investment pool
+// Money africa (MONI) investment pool
+// Gamified saving pool to naira savings pool
+//
