@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   VStack,
@@ -7,9 +7,10 @@ import {
   Input,
   useToast,
 } from "@chakra-ui/react";
+import Confetti from "react-confetti";
+
 import { useForm } from "react-hook-form";
 import axios from "axios";
-
 function Reedeem() {
   const {
     register,
@@ -17,7 +18,16 @@ function Reedeem() {
     formState: { errors },
   } = useForm();
   const toast = useToast();
+  const [confetti, setConfitti] = useState();
+  const [windowSize, setWindowSize] = useState({
+    width: undefined,
+    height: undefined,
+  });
+
   const [isLoading, setIsLoading] = useState(false);
+  const handleWindowResize = () => {
+    setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+  };
   const handleRedeem = async (data) => {
     console.log(data);
     setIsLoading(true);
@@ -30,7 +40,15 @@ function Reedeem() {
       .then(function (response) {
         console.log(response);
         setIsLoading(false);
-        toast({ title: "Giftcard Redeemed", status: "success" });
+        toast({
+          title: "Giftcard redeemed to your wallet",
+          position: "top",
+          status: "success",
+        });
+        setConfitti(true);
+        setTimeout(() => {
+          setConfitti(false);
+        }, 5000);
       })
       .catch(function (error) {
         console.log(error.response);
@@ -40,7 +58,9 @@ function Reedeem() {
         setIsLoading(false);
       });
   };
-
+  useEffect(() => {
+    handleWindowResize();
+  }, []);
   return (
     <Container
       py="52px"
@@ -50,6 +70,9 @@ function Reedeem() {
       bg={"brand.50"}
       my="10"
     >
+      {confetti && (
+        <Confetti width={windowSize.width} height={windowSize.height} />
+      )}
       <VStack gap={"5"} alignItems="flex-start">
         <Text>Enter Your Gift Card Code</Text>
         <form onSubmit={handleSubmit(handleRedeem)} style={{ width: "100%" }}>
