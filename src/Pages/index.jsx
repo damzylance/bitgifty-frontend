@@ -25,18 +25,18 @@ import { Link } from "react-router-dom";
 const animationKeyframes = keyframes`
   0% {
     opacity: 0;
-    transform: translateY(80%);
+    transform: translateX(80%);
   }
   20% {
     opacity: 0;
   }
   50% {
     opacity: 1;
-    transform: translateY(0%);
+    transform: translateX(0%);
   }
   100% {
     opacity: 1;
-    transform: translateY(0%);
+    transform: translateX(0%);
   }
 `;
 const animation = `${animationKeyframes} 2s ease-out `;
@@ -48,7 +48,8 @@ const Home = () => {
       background={
         "linear-gradient(234.75deg, #7CA6F8 -8.55%, #DFF7F4 34.87%, #DCE6F9 75.49%, #F7FCFD 110.11%)"
       }
-      pt={"40px"}
+      pt={[0, 0, "40px", "40px"]}
+      spacing={0}
     >
       <Box width={"full"}>
         <Container maxWidth={["full", "full", "95%", "80%"]}>
@@ -91,7 +92,7 @@ const Home = () => {
                 <Button background={"brand.700"} size={"lg"}>
                   Get Started
                 </Button>
-                {/* <Text fontSize={"90px"} fontWeight={700}>
+                {/* <Text fontSize={"64px"} fontWeight={700}>
                   SEND THE GIFT OF CRYPTO WITH EASE
                 </Text>
                 <Text fontSize={"24px"}>
@@ -109,52 +110,43 @@ const Home = () => {
           maxWidth={["full", "full", "95%", "80%"]}
           position={"relative"}
         >
-          <Box>
+          <HStack flexDir={["column", "column", "row", "row"]} gap={"20px"}>
             <VStack
               alignItems={"flex-start"}
               width={["300px", "300px", "500px", "895px"]}
               position={"relative"}
-              gap={"20px"}
+              gap={5}
               as={motion.div}
               animation={animation}
             >
               <Text
-                fontSize={["30px", "30px", "60px", "90px"]}
-                lineHeight={["26px", "26px", "53px", "106px"]}
-                fontWeight={"700"}
+                fontSize={["38px", "40px", "42px", "64px"]}
+                maxW={"500px"}
+                fontWeight={"900"}
+                lineHeight={["60px", "60px", "78px", "80px"]}
               >
-                SEND THE GIFT OF
+                SEND THE GIFT OF CRYPTO WITH EASE
               </Text>
+
               <Text
-                fontSize={["30px", "30px", "60px", "90px"]}
-                fontWeight={"700"}
-                lineHeight={["26px", "26px", "53px", "106px"]}
+                fontSize={["18px", "18px", "24px", "24px"]}
+                maxWidth={"500px"}
+                fontWeight={"500"}
               >
-                CRYPTO WITH
-              </Text>
-              <Text
-                fontSize={["30px", "30px", "60px", "90px"]}
-                fontWeight={"700"}
-                lineHeight={["26px", "26px", "53px", "106px"]}
-              >
-                EASE
-              </Text>
-              <Text fontSize={"24px"} maxWidth={"500px"} fontWeight={"500"}>
                 Give the Gift of Choice: Create and redeem your crypto gift
                 cards here at Gifty!
               </Text>
               <Button size={"lg"}>Get Started</Button>
-              <Image
-                position={"absolute"}
-                right={"-30%"}
-                bottom={"-10%"}
-                zIndex={0}
-                width={"580px"}
-                display={["none", "none", "block", "block"]}
-                src="/assets/images/home-hero1.png"
-              />
             </VStack>
-          </Box>
+            <Image
+              // position={"absolute"}
+              // right={"-30%"}
+              // bottom={"-10%"}
+              // zIndex={0}
+              maxW={["auto", "auto", "580px", "580px"]}
+              src="/assets/images/home-hero1.png"
+            />
+          </HStack>
         </Container>
       </Box>
       <Box width={"full"} background={"brand.700"} py={"40px"}>
@@ -199,117 +191,130 @@ const Home = () => {
         >
           <VStack position={"relative"} width={"full"} gap={"80px"}>
             <HStack
+              background={"url(/assets/images/pattern_img.png)"}
               position={["relative", "relative", "absolute", "absolute"]}
+              bgRepeat={"no-repeat"}
+              backgroundSize={["cover", "cover", "cover", "90%"]}
               top={[null, null, "-80px", "-100px"]}
               gap={"40px"}
-              justifyContent={"space-between"}
-              flexDir={["column", "column", "row", "row"]}
+              justifyContent={["center"]}
+              // flexDir={["column", "column", "row", "row"]}
+              wrap={"wrap"}
             >
               <ResultCard />
               <ResultCard />
               <ResultCard />
             </HStack>
-            <VStack width={"full"} pt={[0, 0, "200px", "300px"]}>
-              <Text fontSize={"48px"} fontWeight={"700"}>
-                ABOUT US
-              </Text>
-              <Text textAlign={"center"} px={"50px"} fontSize={"24px"}>
-                Bitgifty ia a platform which allows users create and redeem
-                crypto gift cards easily with just few clicks{" "}
-              </Text>
-            </VStack>
-            <VStack
-              mt={"300px"}
-              width={"full"}
-              alignItems={"flex-start"}
-              gap={"40px"}
-              position={"relative"}
-            >
-              <HStack
+            <VStack width={"full"}>
+              <VStack width={"full"} pt={[0, 0, "200px", "300px"]}>
+                <Text
+                  fontSize={["32px", "32px", "40px", "48px"]}
+                  fontWeight={"700"}
+                >
+                  ABOUT US
+                </Text>
+                <Text
+                  textAlign={"center"}
+                  px={["10px", "10px", "25px", "50px"]}
+                  fontSize={["16px", "16px", "16px", "24px"]}
+                >
+                  Bitgifty ia a platform which allows users create and redeem
+                  crypto gift cards easily with just few clicks{" "}
+                </Text>
+              </VStack>
+              <VStack
+                mt={"300px"}
                 width={"full"}
-                justifyContent={"space-between"}
-                flexDir={["column", "column", "row", "row"]}
-                gap={"20px"}
+                alignItems={"flex-start"}
+                gap={"40px"}
+                position={"relative"}
               >
-                <AboutCard
-                  title={"Our Mission"}
-                  description={
-                    "Our mission is to make it easy for anyone to give the gift of cryptocurrency, whether it's for a special occasion or just because, and our platform makes it simple and convenient to give and receive."
-                  }
-                  icon={"/assets/icons/about-icon1.png"}
+                <HStack
+                  width={"full"}
+                  justifyContent={"space-between"}
+                  flexDir={["column", "column", "row", "row"]}
+                  gap={"20px"}
+                >
+                  <AboutCard
+                    title={"Our Mission"}
+                    description={
+                      "Our mission is to make it easy for anyone to give the gift of cryptocurrency, whether it's for a special occasion or just because, and our platform makes it simple and convenient to give and receive."
+                    }
+                    icon={"/assets/icons/about-icon1.png"}
+                  />
+                  <AboutCard
+                    title={"our team"}
+                    description={
+                      "Our team is made up of experienced professionals in the cryptocurrency and tech industries. We are passionate about making cryptocurrency accessible to everyone, and we bring that passion to our work."
+                    }
+                    icon={"/assets/icons/about-icon2.png"}
+                  />
+                </HStack>
+                <HStack
+                  width={"full"}
+                  justifyContent={"space-between"}
+                  flexDir={["column", "column", "row", "row"]}
+                  gap={"20px"}
+                >
+                  <AboutCard
+                    title={"Our Values"}
+                    description={
+                      "At our core, we believe in transparency, security, and customer satisfaction. We are committed to providing a platform that is secure, easy to use, and meets the needs of our customers."
+                    }
+                    icon={"/assets/icons/about-icon2.png"}
+                  />
+                  <AboutCard
+                    title={"our history"}
+                    description={
+                      "Our platform was founded in 2023 with the goal of making cryptocurrency more accessible. Since then, we have grown to become one of the leading providers of cryptocurrency gift cards."
+                    }
+                    icon={"/assets/icons/about-icon3.png"}
+                  />
+                </HStack>
+                <hr
+                  style={{
+                    borderColor:
+                      "radial-gradient(55.49% 78.03% at 50% 50%, #103D96 0%, #477FEB 41.53%, #74D5DE 100%)",
+                    width: "450px",
+                    position: "absolute",
+                    top: "50%",
+                  }}
                 />
-                <AboutCard
-                  title={"our team"}
-                  description={
-                    "Our team is made up of experienced professionals in the cryptocurrency and tech industries. We are passionate about making cryptocurrency accessible to everyone, and we bring that passion to our work."
-                  }
-                  icon={"/assets/icons/about-icon2.png"}
+                <hr
+                  style={{
+                    borderColor:
+                      "radial-gradient(55.49% 78.03% at 50% 50%, #103D96 0%, #477FEB 41.53%, #74D5DE 100%)",
+                    width: "450px",
+                    position: "absolute",
+                    top: "50%",
+                    right: 0,
+                  }}
                 />
-              </HStack>
-              <HStack
-                width={"full"}
-                justifyContent={"space-between"}
-                flexDir={["column", "column", "row", "row"]}
-                gap={"20px"}
-              >
-                <AboutCard
-                  title={"Our Values"}
-                  description={
-                    "At our core, we believe in transparency, security, and customer satisfaction. We are committed to providing a platform that is secure, easy to use, and meets the needs of our customers."
-                  }
-                  icon={"/assets/icons/about-icon2.png"}
-                />
-                <AboutCard
-                  title={"our history"}
-                  description={
-                    "Our platform was founded in 2023 with the goal of making cryptocurrency more accessible. Since then, we have grown to become one of the leading providers of cryptocurrency gift cards."
-                  }
-                  icon={"/assets/icons/about-icon3.png"}
-                />
-              </HStack>
-              <hr
-                style={{
-                  borderColor:
-                    "radial-gradient(55.49% 78.03% at 50% 50%, #103D96 0%, #477FEB 41.53%, #74D5DE 100%)",
-                  width: "450px",
-                  position: "absolute",
-                  top: "50%",
-                }}
-              />
-              <hr
-                style={{
-                  borderColor:
-                    "radial-gradient(55.49% 78.03% at 50% 50%, #103D96 0%, #477FEB 41.53%, #74D5DE 100%)",
-                  width: "450px",
-                  position: "absolute",
-                  top: "50%",
-                  right: 0,
-                }}
-              />
-              <hr
-                style={{
-                  borderColor:
-                    "radial-gradient(55.49% 78.03% at 50% 50%, #103D96 0%, #477FEB 41.53%, #74D5DE 100%)",
-                  width: "220px",
-                  position: "absolute",
-                  top: "20%",
-                  left: "40%",
+                <hr
+                  style={{
+                    borderColor:
+                      "radial-gradient(55.49% 78.03% at 50% 50%, #103D96 0%, #477FEB 41.53%, #74D5DE 100%)",
+                    width: "220px",
+                    position: "absolute",
+                    top: "20%",
+                    left: "40%",
 
-                  transform: "rotate(90deg)",
-                }}
-              />
-              <hr
-                style={{
-                  borderColor:
-                    "radial-gradient(55.49% 78.03% at 50% 50%, #103D96 0%, #477FEB 41.53%, #74D5DE 100%)",
-                  width: "220px",
-                  position: "absolute",
-                  bottom: "20%",
-                  left: "40%",
+                    transform: "rotate(90deg)",
+                  }}
+                />
+                <hr
+                  style={{
+                    borderColor:
+                      "radial-gradient(55.49% 78.03% at 50% 50%, #103D96 0%, #477FEB 41.53%, #74D5DE 100%)",
+                    width: "220px",
+                    position: "absolute",
+                    bottom: "20%",
+                    left: "40%",
 
-                  transform: "rotate(90deg)",
-                }}
-              />
+                    transform: "rotate(90deg)",
+                  }}
+                />
+              </VStack>
             </VStack>
           </VStack>
         </Container>
@@ -332,7 +337,7 @@ const Home = () => {
             gap={"40px"}
             position={"relative"}
           >
-            <VStack position={"relative"}>
+            <VStack position={"relative"} alignItems={"flex-start"}>
               {" "}
               <Text
                 textTransform={"uppercase"}
@@ -359,7 +364,18 @@ const Home = () => {
           display={["none", "none", "block", "block"]}
         />
       </Box>
-      <Box width={"full"} position={"relative"} py={"40px"}>
+      <Box
+        width={"full"}
+        position={"relative"}
+        py={"40px"}
+        backgroundSize={"cover"}
+        backgroundPosition={"left center"}
+        backgroundImage={[
+          "url(/assets/images/confettibg2.png)",
+          "url(/assets/images/confettibg2.png)",
+          "none",
+        ]}
+      >
         <Container
           maxWidth={["full", "full", "95%", "80%"]}
           position={"relative"}
@@ -378,12 +394,15 @@ const Home = () => {
               flexDir={["column", "column", "row", "row"]}
             >
               <VStack alignItems={"flex-start"}>
-                <Text fontSize={"48px"} fontWeight={"700"}>
+                <Text
+                  fontSize={["32px", "32px", "40px", "48px"]}
+                  fontWeight={"700"}
+                >
                   How it works
                 </Text>
                 <Image
                   width={"380px"}
-                  src="/assets/images/male-hero.png"
+                  src={"/assets/images/male-hero.png"}
                   display={["none", "none", "block", "block"]}
                 />
               </VStack>
@@ -392,29 +411,46 @@ const Home = () => {
                 gap={"20px"}
                 position={"relative"}
               >
-                <Text fontSize={"24px"} maxW={"500px"}>
+                <Text
+                  fontSize={["16px", "16px", "24px", "24px"]}
+                  maxW={"500px"}
+                >
                   Here are the 4 simplified steps for how our product works
                 </Text>
-                <VStack alignItems={"flex-start"} gap={"30px"}>
+                <VStack
+                  width={"full"}
+                  alignItems={["center", "center", "flex-start", "flex-start"]}
+                  gap={"30px"}
+                >
                   <GuideCard
                     index={1}
                     title={"choose cryptocurrency"}
                     description={"Select the cryptocurrency you want to gift."}
+                    image={"/assets/images/choosecoin.jpg"}
                   />
                   <GuideCard
                     index={2}
-                    title={"choose cryptocurrency"}
-                    description={"Select the cryptocurrency you want to gift."}
+                    title={"Select gift card value"}
+                    description={
+                      "Choose the value of the gift card you want to buy.."
+                    }
+                    image={"/assets/images/inputamount.jpg"}
                   />
                   <GuideCard
                     index={3}
-                    title={"choose cryptocurrency"}
-                    description={"Select the cryptocurrency you want to gift."}
+                    title={"Personalize the gift card"}
+                    description={
+                      "Add a personal message and choose a design for the gift card."
+                    }
+                    image={"/assets/images/giftcard.jpg"}
                   />
                   <GuideCard
                     index={4}
-                    title={"choose cryptocurrency"}
-                    description={"Select the cryptocurrency you want to gift."}
+                    title={"Purchase gift card"}
+                    description={
+                      "Enter payment information to purchase the gift card."
+                    }
+                    image={"/assets/images/giftcard.jpg"}
                   />
                   <hr
                     style={{
@@ -461,10 +497,13 @@ const Home = () => {
             borderRadius={"30px"}
             mt={"100px"}
           >
-            <Image src="assets/images/mobile-hero.png" width={"350px"} />
+            <Image
+              src="assets/images/mobile-hero.png"
+              width={["150px", "150px", "350px", "350px"]}
+            />
             <VStack gap={"20px"} alignItems={"flex-start"}>
               <Text
-                fontSize={"48px"}
+                fontSize={["24px", "24px", "48px", "48px"]}
                 textTransform={"uppercase"}
                 fontWeight={700}
                 maxW={"600px"}
@@ -472,13 +511,14 @@ const Home = () => {
               >
                 Introducing Bitgifty for ios and android
               </Text>
-              <Text color={"#fff"} fontSize={"24px"} maxW={"500px"}>
-                Now available to be downloaded on mobile devices around the
-                world on the App & Play Stores.
+              <Text
+                color={"#fff"}
+                fontSize={["14px", "14px", "24px", "24px"]}
+                maxW={"500px"}
+              >
+                Bitgifty App will soon available for download on mobile devices
+                around the world on the App & Play Stores.
               </Text>
-              <Button background={"#fff"} color={"brand.700"}>
-                Get started
-              </Button>
             </VStack>
           </HStack>
         </Container>
@@ -621,13 +661,13 @@ const Home = () => {
           >
             <VStack width={"full"} alignItems={"flex-start"}>
               <Text
-                fontSize={"48px"}
+                fontSize={["24px", "24px", "32px"]}
                 fontWeight={"700"}
                 textTransform={"uppercase"}
               >
                 Bitgifty
               </Text>
-              <Text fontSize={"18px"} fontWeight={"500"}>
+              <Text fontSize={["14px", "14px", "16px"]} fontWeight={"500"}>
                 Give the Gift of Choice: Create and redeem your crypto gift
                 cards here at Gifty!
               </Text>
@@ -639,15 +679,15 @@ const Home = () => {
               gap={"20px"}
             >
               <VStack width={"full"} alignItems={"flex-start"}>
-                <Text fontSize={"32px"} fontWeight={"700"}>
+                <Text fontSize={["16px", "16px", "24px"]} fontWeight={"700"}>
                   Legal
                 </Text>
-                <Link>Privacy Policy</Link>
-                <Link>Help Center</Link>
-                <Link>Terms and Condition</Link>
+                <Link style={{ fontSize: "14px" }}>Privacy Policy</Link>
+                <Link style={{ fontSize: "14px" }}>Help Center</Link>
+                <Link style={{ fontSize: "14px" }}>Terms and Condition</Link>
               </VStack>
               <VStack width={"full"} alignItems={"flex-start"}>
-                <Text fontSize={"32px"} fontWeight={"700"}>
+                <Text fontSize={["16px", "16px", "24px"]} fontWeight={"700"}>
                   Company
                 </Text>
                 <Link>FAQ</Link>
@@ -687,7 +727,7 @@ const InfoCard = (props) => {
         <Text
           textTransform={"uppercase"}
           textAlign={["center", "center", "left", "left"]}
-          fontSize={"24px"}
+          fontSize={["16px", "18px", "24px", "24px"]}
           fontWeight={"700"}
           as={motion.div}
           animation={animation}
@@ -701,7 +741,7 @@ const InfoCard = (props) => {
         >
           <Text
             textAlign={["center", "center", "left", "left"]}
-            fontSize={"20px"}
+            fontSize={"14px"}
             as={motion.div}
             animation={animation}
           >
@@ -710,7 +750,7 @@ const InfoCard = (props) => {
           <Text
             as={motion.div}
             animation={animation}
-            fontSize={"20px"}
+            fontSize={"14px"}
             textDecoration={"underline"}
           >
             Learn More...
@@ -736,7 +776,9 @@ const AboutCard = (props) => {
           {" "}
           {props.title}
         </Text>
-        <Text fontSize={"20px"}>{props.description}</Text>
+        <Text fontSize={["14px", "14px", "24px", "24px"]}>
+          {props.description}
+        </Text>
       </VStack>
     </HStack>
   );
@@ -744,7 +786,7 @@ const AboutCard = (props) => {
 const GuideCard = (props) => {
   return (
     <HStack
-      alignItems={"flex-start"}
+      alignItems={["center", "center", "flex-start"]}
       gap={"20px"}
       flexDir={["column", "column", "row", "row"]}
     >
@@ -761,12 +803,30 @@ const GuideCard = (props) => {
         </Text>
       </HStack>
 
-      <VStack alignItems={"flex-start"} color={"#000"} maxW={"350px"}>
-        <Text textTransform={"capitalize"} fontSize={"24px"} fontWeight={"700"}>
+      <VStack
+        alignItems={["center", "center", "flex-start"]}
+        color={"#000"}
+        maxW={"350px"}
+      >
+        <Image
+          display={["inline-block", "inline-block", "none", "none"]}
+          width={"300px"}
+          borderRadius={"10px"}
+          src={props.image}
+        />
+        <Text
+          textTransform={"capitalize"}
+          fontSize={["16px", "18px", "24px", "24px"]}
+          fontWeight={"700"}
+        >
           {" "}
           {props.title}
         </Text>
-        <Text maxW={"300px"} fontSize={"20px"}>
+        <Text
+          maxW={"300px"}
+          textAlign={["center", "center", "left", "left"]}
+          fontSize={"14px"}
+        >
           {props.description}
         </Text>
       </VStack>
@@ -776,16 +836,20 @@ const GuideCard = (props) => {
 const ResultCard = () => {
   return (
     <VStack
-      borderRadius={"10px"}
-      px={"60px"}
-      py={"80px"}
+      borderRadius={["50%", "50%", "100px", "10px"]}
+      px={["14px", "14px", "60px", "60px"]}
+      py={["36px", "36px", "40px", "80px"]}
       background={"#EDFAFD"}
       cursor={"pointer"}
     >
-      <Text fontSize={"64px"} lineHeight={"75px"} fontWeight={"600"}>
+      <Text
+        fontSize={["32px", "32px", "42px", "64px"]}
+        lineHeight={["30px", "30px", "78px", "80px"]}
+        fontWeight={"600"}
+      >
         $1.4B+
       </Text>
-      <Text fontSize={"32px"} fontWeight={"600"}>
+      <Text fontSize={["16px", "18px", "24px", "24px"]} fontWeight={"600"}>
         Trade Volume
       </Text>
     </VStack>
