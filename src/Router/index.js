@@ -9,12 +9,13 @@ import Wallet from "../Pages/Dashboard/Wallet";
 import History from "../Pages/Dashboard/History";
 import Reset from "../Pages/Reset/Reset";
 import CoinDetails from "../Pages/Dashboard/Wallet/Wallet";
+import Home from "../Pages";
 
 function Router() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<Dashboard />} />
+        <Route exact path="/" element={<Home />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/register" element={<Signup />} />
         <Route exact path="/password-reset" element={<Reset />} />

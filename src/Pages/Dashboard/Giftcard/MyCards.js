@@ -35,7 +35,7 @@ function MyCards() {
       })
       .then((response) => {
         setLoading(false);
-        setCards(response.data.results);
+        setCards(response.data.results.reverse());
       })
       .catch((error) => {
         console.log(error);

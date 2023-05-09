@@ -1,0 +1,32 @@
+hr {
+  display: block;
+}
+
+@media screen and (min-width: 320px) {
+  hr {
+    display: none;
+  }
+}
+@media screen and (min-width: 768px) {
+  hr {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 960px) {
+  hr {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  hr {
+    display: block;
+  }
+}
+
+@media screen and (min-width: 1536px) {
+  hr {
+    display: block;
+  }
+}
