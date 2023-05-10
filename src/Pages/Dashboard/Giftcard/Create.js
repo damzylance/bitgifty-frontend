@@ -51,15 +51,11 @@ function Create() {
       .then(function (response) {
         console.log(response.data);
         if (response.data) {
-          console.log(response.data);
+          const entries = Object.entries(response.data);
+          console.log(entries);
           setIsLoading(false);
-          setBalance(
-            response.data[0].info.incoming -
-              response.data[walletIndex].info.outgoing
-          );
-          setWallets(response.data);
-
-          localStorage.setItem("wallets", JSON.stringify(response.data));
+          setWallets(entries);
+          localStorage.setItem("wallets", JSON.stringify(entries));
         }
       })
       .catch(function (error) {
@@ -70,22 +66,21 @@ function Create() {
     const network = `${e.target.value
       .slice(0, 1)
       .toUpperCase()}${e.target.value.slice(1, e.target.value.length)}`;
-    console.log(network);
     for (let index = 0; index < wallets.length; index++) {
-      if (wallets[index].network === network) {
-        if (wallets[index].network === "Bitcoin") {
+      if (wallets[index][0] === network) {
+        if (network === "Bitcoin") {
           setBalance(
-            wallets[index].info.incoming - wallets[index].info.outgoing
+            wallets[index][1].info.incoming - wallets[index][1].info.outgoing
           );
           setAmountMin(0.0003);
-        } else if (wallets[index].network === "Celo") {
-          setBalance(wallets[index].info.celo);
+        } else if (network === "Celo") {
+          setBalance(wallets[index][1].info.celo);
           setAmountMin(2);
-        } else if (wallets[index].network === "Ethereum") {
+        } else if (network === "Ethereum") {
           setAmountMin(0.003);
-          setBalance(wallets[index].info.balance);
-        } else if (wallets[index].network === "Tron") {
-          setBalance(wallets[index].info.balance / 1000000);
+          setBalance(wallets[index][1].info.balance);
+        } else if (network === "Tron") {
+          setBalance(wallets[index][1].info.balance / 1000000);
           setAmountMin(5);
         }
       }
@@ -114,7 +109,6 @@ function Create() {
     data.image = template.id;
     data.amount = parseFloat(data.amount);
     data.quantity = parseInt(data.quantity);
-    console.log(data);
     setIsLoading(true);
     await axios
       .post(`${process.env.REACT_APP_BASE_URL}gift_cards/create/`, data, {
@@ -241,9 +235,10 @@ function Create() {
                 {...register("currency", { onChange: handleCurrencyChange })}
               >
                 {wallets.map((wallet, index) => {
+                  console.log(wallet);
                   return (
-                    <option value={wallet.network.toLowerCase()} key={index}>
-                      {wallet.network}
+                    <option value={wallet[0].toLowerCase()} key={index}>
+                      {wallet[0]}
                     </option>
                   );
                 })}

@@ -40,12 +40,14 @@ function Wallet() {
         },
       })
       .then(function (response) {
-        console.log(response.data);
+        const entries = Object.entries(response.data);
+
         if (response.data) {
           setIsLoading(false);
-          setWallets(response.data);
 
-          localStorage.setItem("wallets", JSON.stringify(response.data));
+          setWallets(entries);
+
+          localStorage.setItem("wallets", JSON.stringify(entries));
         }
       })
       .catch(function (error) {
@@ -153,27 +155,29 @@ function Wallet() {
                   <Spinner />
                 ) : (
                   wallets.map((wallet, index) => {
-                    const { address, network } = wallet;
-
-                    if (network === "Bitcoin") {
-                      wallet.balance =
-                        wallet.info.incoming - wallet.info.outgoing;
-                    } else if (network === "Bnb") {
-                      wallet.balance = wallet.info.balance;
-                    } else if (network === "Celo") {
-                      wallet.balance = wallet.info.celo;
-                    } else if (network === "Ethereum") {
-                      wallet.balance = wallet.info.balance;
-                    } else if (network === "Tron") {
-                      wallet.balance = wallet.info.balance / 1000000;
+                    // const { address, network } = wallet;
+                    const coinWallet = wallet;
+                    let balance;
+                    if (coinWallet[0] === "Bitcoin") {
+                      balance =
+                        coinWallet[1].info.incoming -
+                        coinWallet[1].info.outgoing;
+                    } else if (coinWallet[0] === "Bnb") {
+                      balance = 0;
+                    } else if (coinWallet[0] === "Celo") {
+                      balance = coinWallet[1].info.celo;
+                    } else if (coinWallet[0] === "Ethereum") {
+                      balance = coinWallet[1].info.balance;
+                    } else if (coinWallet[0] === "Tron") {
+                      balance = coinWallet[1].info.balance / 1000000;
                     }
                     return (
                       <CoinRow
                         key={index}
-                        currency={network}
-                        address={address}
-                        amount={wallet.balance}
-                        network={network}
+                        currency={coinWallet[0]}
+                        address={coinWallet[1].address}
+                        amount={balance}
+                        network={coinWallet[0]}
                       />
                     );
                   })
@@ -395,7 +399,7 @@ const WalletModal = (props) => {
                             }
                           } else if (props.network === "Tron") {
                             let coinErrors = [];
-                            if (floatAmount < 4) {
+                            if (floatAmount < 2) {
                               coinErrors.push("Minimum withdrawal is 2  ");
                               setErrors(coinErrors);
                               console.log(coinErrors);

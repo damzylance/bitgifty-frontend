@@ -20,7 +20,7 @@ import {
 import { motion } from "framer-motion";
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const animationKeyframes = keyframes`
   0% {
@@ -42,6 +42,7 @@ const animationKeyframes = keyframes`
 const animation = `${animationKeyframes} 2s ease-out `;
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <VStack
       width={"full"}
@@ -58,6 +59,7 @@ const Home = () => {
               width={"full"}
               justifyContent={"space-between"}
               display={["none", "none", "flex", "flex"]}
+              alignItems={"cener"}
             >
               <Box>
                 <svg
@@ -85,11 +87,15 @@ const Home = () => {
                   />
                 </svg>
               </Box>
-              <HStack gap={"40px"}>
-                <Text fontSize={"24px"}>How it works</Text>
-                <Text fontSize={"24px"}>About </Text>
-                <Text fontSize={"24px"}>FAQ</Text>
-                <Button background={"brand.700"} size={"lg"}>
+              <HStack gap={"40px"} alignItems={"center"}>
+                <Text fontSize={"18px"}>How it works</Text>
+                <Text fontSize={"18px"}>About </Text>
+                <Text fontSize={"18px"}>FAQ</Text>
+                <Button
+                  onClick={() => navigate("/register")}
+                  background={"brand.700"}
+                  size={"lg"}
+                >
                   Get Started
                 </Button>
                 {/* <Text fontSize={"64px"} fontWeight={700}>
@@ -120,12 +126,12 @@ const Home = () => {
               animation={animation}
             >
               <Text
-                fontSize={["38px", "40px", "42px", "64px"]}
+                fontSize={["38px", "40px", "42px", "52px"]}
                 maxW={"500px"}
                 fontWeight={"900"}
                 lineHeight={["60px", "60px", "78px", "80px"]}
               >
-                SEND THE GIFT OF CRYPTO WITH EASE
+                CREATE AND REDEEM CRYPTO GIFT CARDS WITH EASE
               </Text>
 
               <Text
@@ -133,8 +139,8 @@ const Home = () => {
                 maxWidth={"500px"}
                 fontWeight={"500"}
               >
-                Give the Gift of Choice: Create and redeem your crypto gift
-                cards here at Gifty!
+                Send Crypto to your Friends and Family in Style - Create Bitcoin
+                Giftcards in Seconds here at BitGifty!
               </Text>
               <Button size={"lg"}>Get Started</Button>
             </VStack>
@@ -164,21 +170,21 @@ const Home = () => {
               title={"create crypto gift cards"}
               icon={"/assets/icons/info-icon1.png"}
               description={
-                "Our platform allows you to quickly and easily create customized gift cards with just a few clicks."
+                "BitGifty allows you to create your BTC, ETH, CELO, TRX... gift cards easily in just a few clicks."
               }
             />
             <InfoCard
               title={"Redeem crypto gift cards"}
               icon={"/assets/icons/info-icon2.png"}
               description={
-                "Recipients can redeem their gift cards securely and easily through our platform."
+                "BitGifty allows you to redeem your BTC, ETH, CELO, TRX... gift cards easily in just a few clicks."
               }
             />
             <InfoCard
-              title={"Customisable gift card designs"}
+              title={"CUSTOMISED GIFT CARD DESIGNS"}
               icon={"/assets/icons/info-icon3.png"}
               description={
-                "We offer variety of customisable gift card templates; choose the design that best fits you"
+                "Choose from the wide array of colorful gift card designs appropriate for the recipient"
               }
             />
           </HStack>
@@ -218,8 +224,8 @@ const Home = () => {
                   px={["10px", "10px", "25px", "50px"]}
                   fontSize={["16px", "16px", "16px", "24px"]}
                 >
-                  Bitgifty ia a platform which allows users create and redeem
-                  crypto gift cards easily with just few clicks{" "}
+                  Bitgifty is a platform which allows users create and redeem
+                  crypto gift cards easily in just few clicks
                 </Text>
               </VStack>
               <VStack
@@ -233,19 +239,20 @@ const Home = () => {
                   width={"full"}
                   justifyContent={"space-between"}
                   flexDir={["column", "column", "row", "row"]}
+                  alignItems={["", "", "flex-start", "flex-start"]}
                   gap={"20px"}
                 >
                   <AboutCard
-                    title={"Our Mission"}
+                    title={"For Remittance"}
                     description={
-                      "Our mission is to make it easy for anyone to give the gift of cryptocurrency, whether it's for a special occasion or just because, and our platform makes it simple and convenient to give and receive."
+                      "Want to send some money to your friends and family in another country? Send it in style! Create a Crypto gift card specially for them. Show them how much you appreciate them."
                     }
                     icon={"/assets/icons/about-icon1.png"}
                   />
                   <AboutCard
-                    title={"our team"}
+                    title={"For Crypto Trading"}
                     description={
-                      "Our team is made up of experienced professionals in the cryptocurrency and tech industries. We are passionate about making cryptocurrency accessible to everyone, and we bring that passion to our work."
+                      "Don't be boring! You don't have to trade your Bitcoin the same way all the time. Do it differently this time. Create a Bitcoin gift card and send it to the buyer. It is so much easier and faster."
                     }
                     icon={"/assets/icons/about-icon2.png"}
                   />
@@ -255,18 +262,19 @@ const Home = () => {
                   justifyContent={"space-between"}
                   flexDir={["column", "column", "row", "row"]}
                   gap={"20px"}
+                  alignItems={["", "", "flex-start", "flex-start"]}
                 >
                   <AboutCard
-                    title={"Our Values"}
+                    title={"For Loyalty Programs"}
                     description={
-                      "At our core, we believe in transparency, security, and customer satisfaction. We are committed to providing a platform that is secure, easy to use, and meets the needs of our customers."
+                      "How do you say 'thank you' to your loyal staffs and customers? BitGifty provides a creative and seamless way for you to reward them. All you need to is choose your customised Gift card design and create as many gift cards as you want in a few clicks."
                     }
                     icon={"/assets/icons/about-icon2.png"}
                   />
                   <AboutCard
-                    title={"our history"}
+                    title={"For Web3 Gaming"}
                     description={
-                      "Our platform was founded in 2023 with the goal of making cryptocurrency more accessible. Since then, we have grown to become one of the leading providers of cryptocurrency gift cards."
+                      "Want to monetize the accessories of your Web3 game? At BitGifty, we can help create you own custom Gift card using your platform's crypto or any other crypto of your choice."
                     }
                     icon={"/assets/icons/about-icon3.png"}
                   />
@@ -347,8 +355,8 @@ const Home = () => {
                 Create your Gift card
               </Text>
               <Text fontSize={"24px"} maxWidth={"600px"}>
-                Give the Gift of Choice: Create and redeem your crypto gift
-                cards here at Gifty! Give the Gift of Choice
+                Send Crypto to your Friends and Family in Style - Create Bitcoin
+                Giftcards in Seconds here at BitGifty!
               </Text>
             </VStack>
             <Button background={"#fff"} color={"brand.700"}>
@@ -415,7 +423,7 @@ const Home = () => {
                   fontSize={["16px", "16px", "24px", "24px"]}
                   maxW={"500px"}
                 >
-                  Here are the 4 simplified steps for how our product works
+                  Here are 4 simple steps on how to use BitGifty
                 </Text>
                 <VStack
                   width={"full"}
@@ -446,10 +454,8 @@ const Home = () => {
                   />
                   <GuideCard
                     index={4}
-                    title={"Purchase gift card"}
-                    description={
-                      "Enter payment information to purchase the gift card."
-                    }
+                    title={"Buy Gift Card "}
+                    description={"Click on the 'create gift card' button"}
                     image={"/assets/images/giftcard.jpg"}
                   />
                   <hr
@@ -776,7 +782,7 @@ const AboutCard = (props) => {
           {" "}
           {props.title}
         </Text>
-        <Text fontSize={["14px", "14px", "24px", "24px"]}>
+        <Text fontSize={["14px", "14px", "18px", "18px"]}>
           {props.description}
         </Text>
       </VStack>

@@ -29,13 +29,21 @@ const Wallet = () => {
 
   const [page, setPage] = useState("deposits");
   const { currency } = useParams();
-  const currencies = ["bitcoin", "usdt", "bnb", "celo", "cusd", "tron"];
+  const currencies = [
+    "bitcoin",
+    "usdt",
+    "bnb",
+    "celo",
+    "cusd",
+    "tron",
+    "ethereum",
+  ];
   const wallets = JSON.parse(localStorage.getItem("wallets"));
   const paramsMatch = currencies.includes(currency);
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log(paramsMatch);
+  console.log(wallets);
 
   useEffect(() => {
     if (!paramsMatch) {
@@ -150,7 +158,7 @@ const Wallet = () => {
                           "https://live.blockcypher.com/btc-testnet/tx/";
                         if (
                           transaction.inputs[0].coin.address ===
-                          wallets[0].address
+                          wallets[1][1].address
                         ) {
                           type = "Withdrawal";
                           for (let i = 0; i < transaction.inputs.length; i++) {
@@ -195,7 +203,7 @@ const Wallet = () => {
                       if (currency === "celo") {
                         scanner = "https://alfajores.celoscan.io/tx/";
                         coin = "CELO";
-                        if (transaction.from === wallets[2].address) {
+                        if (transaction.from === wallets[2][1].address) {
                           type = "Withdrawal";
                           wallet = `${transaction.to.slice(
                             0,
@@ -276,7 +284,7 @@ const Wallet = () => {
 
                       if (
                         transaction.rawData.contract[0].parameter.value
-                          .ownerAddressBase58 === wallets[4].address
+                          .ownerAddressBase58 === wallets[4][1].address
                       ) {
                         type = "Withdrawal";
                         viewWallet =
