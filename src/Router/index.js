@@ -11,7 +11,7 @@ import Reset from "../Pages/Reset/Reset";
 import PasswordResetConFirm from "../Pages/ChangePassword/ChangePassword";
 import CoinDetails from "../Pages/Dashboard/Wallet/Wallet";
 import Home from "../Pages";
-
+import Notfound from "../Pages/404";
 function Router() {
   return (
     <BrowserRouter>
@@ -22,7 +22,7 @@ function Router() {
         <Route exact path="/password-reset" element={<Reset />} />
         <Route
           exact
-          path="/password-reset-confirm/:uid/:token"
+          path="/auth/password/password-reset-confirm/:uid/:token"
           element={<PasswordResetConFirm />}
         />
 
@@ -33,6 +33,7 @@ function Router() {
         <Route exact path="/history" element={<History />} />
         <Route exact path="/history" element={<History />} />
         <Route exact path="/setting" element={<UserSetting />} />
+        <Route path="/*" element={<Notfound />} />
       </Routes>
     </BrowserRouter>
   );
