@@ -30,33 +30,29 @@ function Reset() {
     console.log(data);
     setIsLoading(true);
     await axios
-      .post(`${process.env.REACT_APP_BASE_URL}auth/password/reset/`, data, {
-        headers: { Authorization: `Token ${localStorage.getItem("token")}` },
-      })
+      .post(`${process.env.REACT_APP_BASE_URL}auth/password/reset/`, data)
 
       .then(function (response) {
-        localStorage.setItem("token", response.data.key);
-        console.log(response);
         setIsLoading(false);
         toast({
           title: "Check your email to reset your password",
           status: "success",
         });
-        setTimeout(() => {
-          navigate("/change-password");
-        }, 5000);
       })
       .catch(function (error) {
-        if (error.response?.data?.non_field_errors) {
-          toast({
-            title: error.response?.data?.non_field_errors[0],
-            status: "error",
-          });
-          console.log(error.response?.data?.non_field_errors[0]);
-        }
-
         console.log(error);
         setIsLoading(false);
+        if (error.response?.status === 400) {
+          toast({
+            title: "Enter a valid email address",
+            status: "error",
+          });
+        } else {
+          toast({
+            title: "An error occured",
+            status: "error",
+          });
+        }
       });
   };
   return (
@@ -88,7 +84,7 @@ function Reset() {
                   name="email"
                   size={"md"}
                   placeholder={"Enter your email"}
-                  type={"text"}
+                  type={"email"}
                   required
                   {...register("email", {})}
                 />

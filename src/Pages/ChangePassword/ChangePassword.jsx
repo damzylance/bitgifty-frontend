@@ -49,11 +49,13 @@ function PasswordResetConFirm() {
         navigate("/login");
       })
       .catch(function (error) {
-        console.log(error);
-
-        toast({ title: "An error occured", status: "error" });
-
         setIsLoading(false);
+        console.log(error);
+        if (error.response.status === 400) {
+          toast({ title: "Invalid credentials", status: "error" });
+        } else {
+          toast({ title: "An error occured", status: "error" });
+        }
       });
   };
   const new_password1 = useRef({});
@@ -132,14 +134,6 @@ function PasswordResetConFirm() {
               >
                 Change Password
               </Button>
-              <Flex gap={1}>
-                <Text fontSize={"sm"}>Already have an account?</Text>
-                <Link to="/login">
-                  <Text fontSize={"sm"} color={"brand.700"}>
-                    Login
-                  </Text>
-                </Link>
-              </Flex>
             </VStack>
           </VStack>
         </form>
