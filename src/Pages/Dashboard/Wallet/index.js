@@ -17,6 +17,7 @@ import {
   useToast,
   Spinner,
   HStack,
+  Image,
 } from "@chakra-ui/react";
 import { NumericFormat } from "react-number-format";
 
@@ -40,6 +41,7 @@ function Wallet() {
         },
       })
       .then(function (response) {
+        console.log(response.data);
         const entries = Object.entries(response.data);
 
         if (response.data) {
@@ -178,6 +180,7 @@ function Wallet() {
                         address={coinWallet[1].address}
                         amount={balance}
                         network={coinWallet[0]}
+                        qr={coinWallet[1].qrcode}
                       />
                     );
                   })
@@ -248,6 +251,7 @@ function CoinRow(props) {
         page={page}
         address={props.address}
         network={props.network}
+        qr={props.qr}
       />
     </Flex>
   );
@@ -280,8 +284,9 @@ const WalletModal = (props) => {
               {props.network} Wallet Address
             </DrawerHeader>
             <DrawerBody>
-              <Box textAlign={"center"} mt={"100px"}>
+              <Box textAlign={"center"} mt={"40px"}>
                 <VStack>
+                  <Image src={props.qr} />
                   <Text fontSize="lg" color={"brand.500"} fontWeight={"bold"}>
                     {props.address}
                   </Text>

@@ -8,6 +8,7 @@ import Giftcard from "../Pages/Dashboard/Giftcard";
 import Wallet from "../Pages/Dashboard/Wallet";
 import History from "../Pages/Dashboard/History";
 import Reset from "../Pages/Reset/Reset";
+import PasswordResetConFirm from "../Pages/ChangePassword/ChangePassword";
 import CoinDetails from "../Pages/Dashboard/Wallet/Wallet";
 import Home from "../Pages";
 
@@ -19,6 +20,12 @@ function Router() {
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/register" element={<Signup />} />
         <Route exact path="/password-reset" element={<Reset />} />
+        <Route
+          exact
+          path="/password-reset-confirm/:uid/:token"
+          element={<PasswordResetConFirm />}
+        />
+
         <Route exact path="/dashboard" element={<Dashboard />} />
         <Route exact path="/giftcard" element={<Giftcard />} />
         <Route exact path="/wallet" element={<Wallet />} />

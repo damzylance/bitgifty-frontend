@@ -30,14 +30,21 @@ function Reset() {
     console.log(data);
     setIsLoading(true);
     await axios
-      .post(`${process.env.REACT_APP_BASE_URL}auth/password/reset`, data)
+      .post(`${process.env.REACT_APP_BASE_URL}auth/password/reset/`, data, {
+        headers: { Authorization: `Token ${localStorage.getItem("token")}` },
+      })
 
       .then(function (response) {
         localStorage.setItem("token", response.data.key);
         console.log(response);
         setIsLoading(false);
-        toast({ title: "Login Successful", status: "success" });
-        navigate("/change-password");
+        toast({
+          title: "Check your email to reset your password",
+          status: "success",
+        });
+        setTimeout(() => {
+          navigate("/change-password");
+        }, 5000);
       })
       .catch(function (error) {
         if (error.response?.data?.non_field_errors) {
@@ -85,28 +92,6 @@ function Reset() {
                   required
                   {...register("email", {})}
                 />
-                <Text color="red" fontSize={"xs"}>
-                  {errors.email?.message}
-                </Text>
-              </Box>
-              <Box width={"full"}>
-                <Input
-                  minLength={3}
-                  name="otp"
-                  size={"md"}
-                  placeholder={"0000"}
-                  type={"number"}
-                  required
-                  {...register("otp", {})}
-                />
-                <Flex>
-                  <Square></Square>
-                  <Square></Square>
-                  <Square></Square>
-                  <Square></Square>
-                  <Square></Square>
-                  <Square></Square>
-                </Flex>
                 <Text color="red" fontSize={"xs"}>
                   {errors.email?.message}
                 </Text>

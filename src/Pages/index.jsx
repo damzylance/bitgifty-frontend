@@ -212,7 +212,7 @@ const Home = () => {
                 <Text fontSize={"18px"}>About </Text>
                 <Text fontSize={"18px"}>FAQ</Text>
                 <Button
-                  onClick={() => navigate("/register")}
+                  onClick={() => navigate("/login")}
                   background={"brand.700"}
                   size={"lg"}
                 >
