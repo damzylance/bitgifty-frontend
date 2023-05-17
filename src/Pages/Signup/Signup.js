@@ -44,8 +44,7 @@ function Signup() {
         if (error.response?.status === 400) {
           console.log(error.response.status);
 
-          setServerError("User with detail already exist");
-          toast({ title: serverError, status: "error" });
+          toast({ title: "User with detail already exist", status: "error" });
         }
 
         console.log(error);

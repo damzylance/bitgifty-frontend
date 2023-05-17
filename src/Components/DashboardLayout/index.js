@@ -230,11 +230,11 @@ function DashboardLayout(props) {
           </Container>
         </Authenticate>
       </Box>
-      <Box mt="10" width={"full"} bg={"brand.700"}>
+      {/* <Box mt="10" width={"full"} bg={"brand.700"}>
         <Container height={"60"} py={4} maxW={["100%", "100%", "75%"]}>
           footer
         </Container>
-      </Box>
+      </Box> */}
     </Box>
   );
 }
