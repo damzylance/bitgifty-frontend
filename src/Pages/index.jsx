@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RxHamburgerMenu, RxCross1, RxCaretRight } from "react-icons/rx";
 
@@ -62,7 +62,15 @@ const Home = () => {
   const showMobileMenu = () => {
     setOpenMenu(!openMenu);
   };
-
+  const howItWorks = useRef(null);
+  const about = useRef(null);
+  const faq = useRef(null);
+  const scrollToSection = (elementRef) => {
+    window.scrollTo({
+      top: elementRef.current.offsetTop,
+      behavior: "smooth",
+    });
+  };
   return (
     <VStack
       width={"full"}
@@ -111,62 +119,53 @@ const Home = () => {
               justifyContent={"space-between"}
             >
               <VStack width={"full"} alignItems={"flex-start"}>
-                <Link to={"/giftcard"} style={{ width: "100%" }}>
-                  <HStack
-                    width={"full"}
-                    justifyContent={"space-between"}
-                    alignItems={"center"}
-                    py={"10px"}
-                    borderBottom={"1px solid #eae8e8"}
-                  >
-                    <Text fontWeight={"500"} fontSize={"lg"}>
-                      Gift Card
-                    </Text>
-                    <RxCaretRight fontSize={"24px"} />
-                  </HStack>
-                </Link>
-                <Link to={"/wallet"} style={{ width: "100%" }}>
-                  <HStack
-                    width={"full"}
-                    justifyContent={"space-between"}
-                    alignItems={"center"}
-                    py={"10px"}
-                    borderBottom={"1px solid #eae8e8"}
-                  >
-                    <Text fontWeight={"500"} fontSize={"lg"}>
-                      Wallet
-                    </Text>
-                    <RxCaretRight fontSize={"24px"} />
-                  </HStack>
-                </Link>
-                <Link to={"/setting"} style={{ width: "100%" }}>
-                  <HStack
-                    width={"full"}
-                    justifyContent={"space-between"}
-                    alignItems={"center"}
-                    py={"10px"}
-                    borderBottom={"1px solid #eae8e8"}
-                  >
-                    <Text fontWeight={"500"} fontSize={"lg"}>
-                      Settings
-                    </Text>
-                    <RxCaretRight fontSize={"24px"} />
-                  </HStack>
-                </Link>
-                <Link to={"/wallet"} style={{ width: "100%" }}>
-                  <HStack
-                    width={"full"}
-                    justifyContent={"space-between"}
-                    alignItems={"center"}
-                    py={"10px"}
-                    borderBottom={"1px solid #eae8e8"}
-                  >
-                    <Text fontWeight={"500"} fontSize={"lg"}>
-                      Logout
-                    </Text>
-                    <RxCaretRight fontSize={"24px"} />
-                  </HStack>
-                </Link>
+                <HStack
+                  width={"full"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                  py={"10px"}
+                  borderBottom={"1px solid #eae8e8"}
+                  onClick={() => {
+                    scrollToSection(howItWorks);
+                  }}
+                >
+                  <Text sx={navStyle} _hover={navHoverStyle}>
+                    How it works
+                  </Text>
+                  <RxCaretRight fontSize={"24px"} />
+                </HStack>
+
+                <HStack
+                  onClick={() => {
+                    scrollToSection(about);
+                  }}
+                  width={"full"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                  py={"10px"}
+                  borderBottom={"1px solid #eae8e8"}
+                >
+                  <Text sx={navStyle} _hover={navHoverStyle}>
+                    About
+                  </Text>
+                  <RxCaretRight fontSize={"24px"} />
+                </HStack>
+
+                <HStack
+                  width={"full"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                  py={"10px"}
+                  borderBottom={"1px solid #eae8e8"}
+                  onClick={() => {
+                    scrollToSection(faq);
+                  }}
+                >
+                  <Text sx={navStyle} _hover={navHoverStyle}>
+                    FAQ
+                  </Text>
+                  <RxCaretRight fontSize={"24px"} />
+                </HStack>
               </VStack>
             </VStack>
           )}
@@ -186,13 +185,31 @@ const Home = () => {
                 />
               </Box>
               <HStack gap={"20px"} alignItems={"center"}>
-                <Text sx={navStyle} _hover={navHoverStyle}>
+                <Text
+                  onClick={() => {
+                    scrollToSection(howItWorks);
+                  }}
+                  sx={navStyle}
+                  _hover={navHoverStyle}
+                >
                   How it works
                 </Text>
-                <Text sx={navStyle} _hover={navHoverStyle}>
+                <Text
+                  onClick={() => {
+                    scrollToSection(about);
+                  }}
+                  sx={navStyle}
+                  _hover={navHoverStyle}
+                >
                   About
                 </Text>
-                <Text sx={navStyle} _hover={navHoverStyle}>
+                <Text
+                  onClick={() => {
+                    scrollToSection(faq);
+                  }}
+                  sx={navStyle}
+                  _hover={navHoverStyle}
+                >
                   FAQ
                 </Text>
                 <Button
@@ -296,7 +313,7 @@ const Home = () => {
           </HStack>
         </Container>
       </Box>
-      <Box width={"full"} position="relative" pb={"100px"}>
+      <Box width={"full"} position="relative" pb={"100px"} ref={about}>
         <Container
           maxWidth={["full", "full", "95%", "80%"]}
           position={"relative"}
@@ -323,7 +340,7 @@ const Home = () => {
               <ResultCard value={"100+"} text={"Giftcards redeemed"} />
               <ResultCard value={"500+"} text={"Active traders"} />
             </HStack>
-            <VStack width={"full"} gap={"30px"}>
+            <VStack width={"full"} gap={"30px"} ref={about}>
               <VStack width={"full"} pt={[0, 0, "200px", "300px"]}>
                 <Text
                   fontSize={["32px", "32px", "40px", "48px"]}
@@ -493,6 +510,7 @@ const Home = () => {
           "url(/assets/images/confettibg2.png)",
           "none",
         ]}
+        ref={howItWorks}
       >
         <Container
           maxWidth={["full", "full", "95%", "80%"]}
@@ -648,6 +666,7 @@ const Home = () => {
         bgSize={"contain"}
         bgRepeat={"no-repeat"}
         bgPosition={"left"}
+        ref={faq}
       >
         <Container
           maxWidth={["full", "full", "95%", "80%"]}
@@ -945,8 +964,8 @@ const ResultCard = ({ text, value }) => {
   return (
     <VStack
       borderRadius={["50%", "50%", "100px", "10px"]}
-      px={["14px", "14px", "60px", "10px", "60px"]}
-      py={["36px", "36px", "40px", "80px"]}
+      px={["20px", "20px", "60px", "10px", "60px"]}
+      py={["28px", "28px", "40px", "80px"]}
       background={"#EDFAFD"}
       cursor={"pointer"}
     >
@@ -957,7 +976,12 @@ const ResultCard = ({ text, value }) => {
       >
         {value}
       </Text>
-      <Text fontSize={["16px", "18px", "24px", "24px"]} fontWeight={"600"}>
+      <Text
+        textAlign={["center", "center", "", "", ""]}
+        maxW={["100px", "100px", "", "", ""]}
+        fontSize={["16px", "18px", "24px", "24px"]}
+        fontWeight={"600"}
+      >
         {text}
       </Text>
     </VStack>
