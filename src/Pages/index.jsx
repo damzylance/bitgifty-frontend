@@ -978,7 +978,7 @@ const ResultCard = ({ text, value }) => {
       </Text>
       <Text
         textAlign={["center", "center", "", "", ""]}
-        maxW={["100px", "100px", "", "", ""]}
+        maxW={["100px", "100px", "300px", "300px", "400px"]}
         fontSize={["16px", "18px", "24px", "24px"]}
         fontWeight={"600"}
       >
