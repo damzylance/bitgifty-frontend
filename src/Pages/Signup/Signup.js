@@ -105,7 +105,7 @@ function Signup() {
                   {errors.email?.message}
                 </Text>
               </Box>
-              <Box width={"full"}>
+              {/* <Box width={"full"}>
                 <InputGroup>
                   <InputLeftAddon children="+234" />
                   <Input
@@ -122,9 +122,9 @@ function Signup() {
                   />
                 </InputGroup>
                 <Text fontSize={"xs"}>{errors.phone_number?.message}</Text>
-              </Box>
+              </Box> */}
 
-              <Select
+              {/* <Select
                 size={"md"}
                 name="country"
                 placeholder="Select Country"
@@ -132,7 +132,7 @@ function Signup() {
                 required
               >
                 <option value={"nigeria"}>Nigeria</option>
-              </Select>
+              </Select> */}
               <Box width={"full"}>
                 <Input
                   size={"md"}

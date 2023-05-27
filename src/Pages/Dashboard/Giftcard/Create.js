@@ -16,6 +16,7 @@ import {
   Textarea,
   useToast,
   Spinner,
+  Checkbox,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -41,6 +42,7 @@ function Create() {
   const [templatesLoading, setTemplatesLoading] = useState(true);
   const [templates, setTemplates] = useState([]);
   const [template, setTemplate] = useState();
+  const [checkEmail, setCheckEmail] = useState(false);
   const fetchWallets = async () => {
     await axios
       .get(`${process.env.REACT_APP_BASE_URL}wallets/`, {
@@ -108,7 +110,8 @@ function Create() {
   const onSubmit = async (data) => {
     data.image = template.id;
     data.amount = parseFloat(data.amount);
-    data.quantity = parseInt(data.quantity);
+    data.quantity = 1;
+    console.log(data);
     setIsLoading(true);
     await axios
       .post(`${process.env.REACT_APP_BASE_URL}gift_cards/create/`, data, {
@@ -318,16 +321,7 @@ function Create() {
                 <Text>{balance}</Text>
               </Flex>
             </VStack>
-            <FormControl>
-              <FormLabel>Enter Quantity</FormLabel>
-              <Input
-                type={"number"}
-                name={"quantity"}
-                min={1}
-                required
-                {...register("quantity")}
-              />
-            </FormControl>
+
             <FormControl>
               <FormLabel>Note (optional)</FormLabel>
               <Textarea
@@ -336,6 +330,26 @@ function Create() {
                 {...register("note")}
               />
             </FormControl>
+
+            <Checkbox onChange={() => setCheckEmail(!checkEmail)}>
+              Send to receipent email
+            </Checkbox>
+            {checkEmail ? (
+              <FormControl>
+                <FormLabel>Receipent Email</FormLabel>
+                <Input
+                  placeholder="friend@mail.com"
+                  type="email"
+                  name="note"
+                  required
+                  background={"brand.50"}
+                  {...register("receipent_email")}
+                />
+              </FormControl>
+            ) : (
+              ""
+            )}
+
             <Flex width={"full"} justifyContent="space-between">
               <VStack width={"full"} alignItems="flex-start">
                 <Flex width={"full"} justifyContent={"space-between"}>
@@ -354,7 +368,7 @@ function Create() {
                   size={"lg"}
                   colorScheme={"brand"}
                 >
-                  Create
+                  Create {checkEmail && ` & Send`}
                 </Button>
               </Box>
             </Flex>

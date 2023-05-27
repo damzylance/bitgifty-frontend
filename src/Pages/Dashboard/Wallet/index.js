@@ -27,6 +27,45 @@ import DashboardLayout from "../../../Components/DashboardLayout";
 import Authenticate from "../../../Helpers/Auth";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+export const data = {
+  labels: ["BTC", "ETH", "BNB", "CELO", "USDT", "CUSD"],
+  datasets: [
+    {
+      label: "# of Votes",
+      data: [12, 19, 3, 5, 2, 3],
+      backgroundColor: [
+        "rgba(255, 255, 251, 0.8)",
+        "rgba(54, 162, 235, 0.2)",
+        "rgba(255, 206, 86, 0.2)",
+        "rgba(75, 192, 192, 0.2)",
+        "rgba(153, 102, 255, 0.2)",
+        "rgba(255, 159, 64, 0.2)",
+      ],
+      borderColor: [
+        "rgba(255, 99, 132, 1)",
+        "rgba(54, 162, 235, 1)",
+        "rgba(255, 206, 86, 1)",
+        "rgba(75, 192, 192, 1)",
+        "rgba(153, 102, 255, 1)",
+        "rgba(255, 159, 64, 1)",
+      ],
+      borderWidth: 1,
+    },
+  ],
+};
+
+const chartOptions = {
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+};
 
 function Wallet() {
   const [wallets, setWallets] = useState([]);
@@ -82,19 +121,57 @@ function Wallet() {
           </ButtonGroup>
         </Flex>
         <Container
-          background={"brand.50"}
-          py={"12"}
+          background={"brand.600"}
+          py={"4"}
           border={"1px solid #A3BFF5"}
           borderRadius={"12px"}
           maxWidth="400px"
+          position={"relative"}
+          backgroundImage={"assets/images/waves.svg"}
+          bgSize={"cover"}
         >
-          <VStack gap={"12"}>
-            <Text>Total Balance</Text>
-            <Flex gap={"4"}>
-              <Text> 0.01 BTC</Text>
-              <Text> =</Text>
-              <Text> #50000</Text>
-            </Flex>
+          <VStack
+            position={"relative"}
+            alignItems={"flex-start"}
+            gap={0}
+            justifyContent={"flex-start"}
+            width={"full"}
+          >
+            <Text
+              fontStyle={"italic"}
+              color={"whiteAlpha.900"}
+              fontSize={"lg"}
+              fontWeight={"600"}
+            >
+              Total Balance
+            </Text>
+
+            <HStack
+              width={"full"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack gap={"4"} alignItems={"flex-start"}>
+                <Text
+                  fontSize={"2xl"}
+                  fontWeight={"900"}
+                  color={"whiteAlpha.900"}
+                >
+                  0.01 BTC
+                </Text>
+                <Text
+                  color={"whiteAlpha.800"}
+                  fontSize={"2xl"}
+                  fontWeight={"900"}
+                >
+                  &#8358;200,000
+                </Text>
+              </VStack>
+              <Box width={"150px"}>
+                {" "}
+                <Doughnut options={chartOptions} data={data} />
+              </Box>
+            </HStack>
           </VStack>
         </Container>
         <VStack alignItems={"flex-start"} width="full" gap={"10"}>

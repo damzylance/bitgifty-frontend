@@ -9,6 +9,7 @@ import {
   Text,
   VStack,
   Container,
+  Spinner,
 } from "@chakra-ui/react";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { useForm } from "react-hook-form";
@@ -28,15 +29,18 @@ function UserSetting() {
   const [user, setUser] = useState({});
   const fetchUser = async () => {
     await axios
-      .get(`${process.env.REACT_APP_BASE_URL}/user/`, {
+      .get(`${process.env.REACT_APP_BASE_URL}auth/user/`, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
       })
-      .then(function (response) {})
+      .then(function (response) {
+        console.log(response);
+        setUser(response.data);
+      })
       .catch(function (error) {
         console.log(error);
-        if (error.response?.status === 500) {
+        if (error?.response?.status === 500) {
           toast({ title: "Server error", status: "error" });
         } else if (error.response?.status === 403) {
           toast({
@@ -55,11 +59,12 @@ function UserSetting() {
             title: "An error occured",
             status: "warning",
           });
-          navigate("/login");
         }
       });
-    axios.get();
   };
+  useEffect(() => {
+    fetchUser();
+  }, []);
   return (
     <SettingsLayout>
       <Text fontSize={"xl"} fontWeight={"bold"} mt={5}>
@@ -85,7 +90,7 @@ function UserSetting() {
                 setIsLoading(false);
                 console.log(error);
               });
-            console.log(data);
+            console.log(register);
           })}
         >
           <VStack gap={6} bg="">
@@ -96,6 +101,7 @@ function UserSetting() {
                 name={"first_name"}
                 placeholder="First Name"
                 {...register("first_name")}
+                defaultValue={user?.first_name ? user.first_name : ""}
               />
               <Input
                 style={inputStyle}
@@ -103,12 +109,14 @@ function UserSetting() {
                 name={"last_name"}
                 {...register("last_name")}
                 placeholder="Last Name"
+                defaultValue={user?.last_name ? user.last_name : ""}
               />
             </HStack>
             <Input
               style={inputStyle}
               type="text"
               placeholder="Username"
+              value={user?.username ? user.username : ""}
               disabled
             />
             <Input
@@ -116,13 +124,14 @@ function UserSetting() {
               disabled={true}
               type="email"
               placeholder="Email Address"
-              value={"omonla@gmail.com"}
+              value={user?.email ? user.email : ""}
             />
             <Input
               style={inputStyle}
               type="tel"
               name={"phone_number"}
               placeholder="Phone Number"
+              defaultValue={user?.phone_number ? user.phone_number : ""}
               {...register("phone_number")}
             />
             <Button

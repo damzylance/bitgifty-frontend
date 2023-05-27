@@ -6,6 +6,7 @@ import {
   HStack,
   Text,
   Image,
+  useToast,
   VStack,
   Button,
 } from "@chakra-ui/react";
@@ -13,11 +14,32 @@ import { RxHamburgerMenu, RxCross1, RxCaretRight } from "react-icons/rx";
 import Authenticate from "../../Helpers/Auth";
 
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function DashboardLayout(props) {
+  const toast = useToast();
   const [openMenu, setOpenMenu] = useState(false);
+  const navigate = useNavigate();
   const showMobileMenu = () => {
     setOpenMenu(!openMenu);
+  };
+  const logOut = () => {
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}auth/logout/`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((response) => {
+        localStorage.removeItem("token");
+        toast({ title: "Successfully Logged out", status: "warning" });
+
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   return (
     <Box width={"full"}>
@@ -186,7 +208,7 @@ function DashboardLayout(props) {
               <Link to="/setting">
                 <Text>Settings</Text>
               </Link>
-              <Link to="/login">
+              <Link onClick={() => logOut()}>
                 <Text>Logout</Text>
               </Link>
             </HStack>

@@ -187,15 +187,6 @@ const Home = () => {
               <HStack gap={"20px"} alignItems={"center"}>
                 <Text
                   onClick={() => {
-                    scrollToSection(howItWorks);
-                  }}
-                  sx={navStyle}
-                  _hover={navHoverStyle}
-                >
-                  How it works
-                </Text>
-                <Text
-                  onClick={() => {
                     scrollToSection(about);
                   }}
                   sx={navStyle}
@@ -203,6 +194,16 @@ const Home = () => {
                 >
                   About
                 </Text>
+                <Text
+                  onClick={() => {
+                    scrollToSection(howItWorks);
+                  }}
+                  sx={navStyle}
+                  _hover={navHoverStyle}
+                >
+                  How it works
+                </Text>
+
                 <Text
                   onClick={() => {
                     scrollToSection(faq);
@@ -237,10 +238,13 @@ const Home = () => {
           maxWidth={["full", "full", "95%", "80%"]}
           position={"relative"}
         >
-          <HStack flexDir={["column", "column", "row", "row"]} gap={"20px"}>
+          <HStack
+            flexDir={["column", "column", "column", "column", "row"]}
+            gap={"20px"}
+          >
             <VStack
               alignItems={"flex-start"}
-              width={["full", "full", "500px", "895px"]}
+              width={["full", "full", "full", "895px"]}
               position={"relative"}
               gap={5}
               as={motion.div}
@@ -330,7 +334,7 @@ const Home = () => {
               ]}
               bgRepeat={"no-repeat"}
               backgroundSize={["cover", "cover", "cover", "90%"]}
-              top={[null, null, "-270px", "-300px", "-100px"]}
+              top={[null, null, "-330px", "-330px", "-100px"]}
               gap={"40px"}
               justifyContent={["center"]}
               // flexDir={["column", "column", "row", "row"]}
@@ -338,7 +342,7 @@ const Home = () => {
             >
               <ResultCard value={"100+"} text={"Gift cards created"} />
               <ResultCard value={"100+"} text={"Giftcards redeemed"} />
-              <ResultCard value={"500+"} text={"Active traders"} />
+              <ResultCard value={"500+"} text={"Active gifters"} />
             </HStack>
             <VStack width={"full"} gap={"30px"} ref={about}>
               <VStack width={"full"} pt={[0, 0, "200px", "300px"]}>
@@ -964,8 +968,9 @@ const ResultCard = ({ text, value }) => {
   return (
     <VStack
       borderRadius={["50%", "50%", "100px", "10px"]}
-      px={["20px", "20px", "60px", "10px", "60px"]}
-      py={["28px", "28px", "40px", "80px"]}
+      width={["150px", "150px", "250px", "300px"]}
+      height={["150px", "150px", "250px", "300px"]}
+      justifyContent={"center"}
       background={"#EDFAFD"}
       cursor={"pointer"}
     >
