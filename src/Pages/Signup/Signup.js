@@ -30,6 +30,7 @@ function Signup() {
   const [serverError, setServerError] = useState("");
   const toast = useToast();
   const onSubmit = async (data) => {
+    data.country = "nigeria";
     console.log(data);
     setIsLoading(true);
     await axios
