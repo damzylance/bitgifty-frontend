@@ -31,27 +31,27 @@ function SettingsLayout(props) {
           flexWrap={["wrap", "wrap", "none"]}
         >
           <Box sx={navStyle}>
-            <Link to="/setting">
+            <Link to="">
               <Text>Profile</Text>
             </Link>
           </Box>
           <Box sx={navStyle}>
-            <Link to="/profile">
+            <Link to="">
               <Text>Security</Text>
             </Link>
           </Box>
           <Box sx={navStyle}>
-            <Link to="/profile">
+            <Link to="">
               <Text>Payout</Text>
             </Link>
           </Box>
           <Box sx={navStyle}>
-            <Link to="/profile">
+            <Link to="">
               <Text>Logout</Text>
             </Link>
           </Box>
           <Box sx={navStyle}>
-            <Link to="/profile">
+            <Link to="">
               <Text>Delete Account</Text>
             </Link>
           </Box>

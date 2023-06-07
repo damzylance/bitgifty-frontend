@@ -28,6 +28,8 @@ function Router() {
 
         <Route exact path="/dashboard" element={<Dashboard />} />
         <Route exact path="/giftcard" element={<Giftcard />} />
+        <Route exact path="/giftcard/:page" element={<Giftcard />} />
+
         <Route exact path="/wallet" element={<Wallet />} />
         <Route exact path="/coin-details/:currency" element={<CoinDetails />} />
         <Route exact path="/history" element={<History />} />

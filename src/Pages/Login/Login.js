@@ -39,18 +39,24 @@ function Login() {
         navigate("/dashboard");
       })
       .catch(function (error) {
-        if (error.response?.data?.non_field_errors) {
+        if (error.response?.status === 400) {
           toast({
-            title: error.response?.data?.non_field_errors[0],
-            status: "error",
-          });
-          console.log(error.response?.data?.non_field_errors[0]);
-        } else {
-          toast({
-            title: "An error occured",
+            title: "Incorrect email or password",
             status: "error",
           });
         }
+        // if (error.response?.data?.non_field_errors) {
+        //   toast({
+        //     title: error.response?.data?.non_field_errors[0],
+        //     status: "error",
+        //   });
+        //   console.log(error.response?.data?.non_field_errors[0]);
+        // } else {
+        //   toast({
+        //     title: "An error occured",
+        //     status: "error",
+        //   });
+        // }
 
         console.log(error);
         setIsLoading(false);

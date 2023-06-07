@@ -10,6 +10,8 @@ import {
   InputLeftAddon,
   Box,
   useToast,
+  InputRightAddon,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
@@ -17,6 +19,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import AuthLayout from "../../Components/AuthLayout";
 import React, { useRef, useState } from "react";
+import { RxEyeClosed, RxEyeOpen } from "react-icons/rx";
 
 function Signup() {
   const {
@@ -28,9 +31,9 @@ function Signup() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
   const onSubmit = async (data) => {
-    data.phone_number = "08012345678";
     console.log(data);
     setIsLoading(true);
     await axios
@@ -43,9 +46,15 @@ function Signup() {
       })
       .catch(function (error) {
         if (error.response?.status === 400) {
-          console.log(error.response.status);
-
-          toast({ title: "User with detail already exist", status: "error" });
+          if (error.response?.data?.email) {
+            toast({ title: "User with email already exist", status: "error" });
+          }
+          if (error.response?.data?.username) {
+            toast({
+              title: "User with username already exist",
+              status: "error",
+            });
+          }
         }
 
         console.log(error);
@@ -87,9 +96,11 @@ function Signup() {
                   placeholder={"Enter preferred username"}
                   required
                   type={"text"}
-                  {...register("username")}
+                  {...register("username", {
+                    minLength: { value: 5, message: "Minimum character is 5" },
+                  })}
                 />
-                <Text color="red" fontSize={"xs"}>
+                <Text color={"red.400"} fontSize={"xs"}>
                   {errors.username?.message}
                 </Text>
               </Box>
@@ -100,9 +111,15 @@ function Signup() {
                   placeholder={"Enter your email"}
                   required
                   type={"email"}
-                  {...register("email")}
+                  {...register("email", {
+                    pattern: {
+                      value:
+                        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                      message: "Provide a valid email address",
+                    },
+                  })}
                 />
-                <Text color="red" fontSize={"xs"}>
+                <Text color={"red.400"} fontSize={"xs"}>
                   {errors.email?.message}
                 </Text>
               </Box>
@@ -135,40 +152,76 @@ function Signup() {
                 <option value={"nigeria"}>Nigeria</option>
               </Select> */}
               <Box width={"full"}>
-                <Input
-                  size={"md"}
-                  name="password1"
-                  placeholder="Password"
-                  {...register("password1", {
-                    minLength: "8",
-                    pattern: {
-                      value:
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
-                      message:
-                        "Password must contain, one uppercase, number and a special character",
-                    },
-                  })}
-                  type={"password"}
-                  required
-                  error={errors.password1}
-                />
-                <Text fontSize={"xs"}>{errors.password1?.message}</Text>
+                <InputGroup>
+                  <Input
+                    size={"md"}
+                    name="password1"
+                    placeholder="Password"
+                    {...register("password1", {
+                      minLength: {
+                        value: 8,
+                        message: "Must contain at least 8 characters",
+                      },
+                      pattern: {
+                        value:
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
+                        message:
+                          "Password must contain, one uppercase, number and a special character",
+                      },
+                    })}
+                    type={showPassword ? "text" : "password"}
+                    required
+                    error={errors.password1}
+                  />
+
+                  <InputRightElement
+                    onClick={() => {
+                      setShowPassword(!showPassword);
+                    }}
+                  >
+                    {showPassword ? (
+                      <RxEyeClosed color="blue" cursor={"pointer"} />
+                    ) : (
+                      <RxEyeOpen color="blue" cursor={"pointer"} />
+                    )}
+                  </InputRightElement>
+                </InputGroup>
+
+                <Text color={"red.400"} fontSize={"xs"}>
+                  {errors.password1?.message}
+                </Text>
               </Box>
               <Box width={"full"}>
-                <Input
-                  name="password2"
-                  size={"md"}
-                  placeholder="Confirm Password"
-                  {...register("password2", {
-                    validate: (value) =>
-                      value === password.current ||
-                      "The passwords do not match",
-                  })}
-                  error={errors.password2}
-                  required
-                  type={"password"}
-                />
-                <Text fontSize={"xs"}>{errors.password2?.message}</Text>
+                <InputGroup>
+                  <Input
+                    name="password2"
+                    size={"md"}
+                    placeholder="Confirm Password"
+                    {...register("password2", {
+                      validate: (value) =>
+                        value === password.current ||
+                        "The passwords do not match",
+                    })}
+                    error={errors.password2}
+                    required
+                    type={showPassword ? "text" : "password"}
+                  />
+                  <InputRightElement
+                    onClick={() => {
+                      setShowPassword(!showPassword);
+                    }}
+                  >
+                    {showPassword ? (
+                      <RxEyeClosed color="blue" cursor={"pointer"} />
+                    ) : (
+                      <RxEyeOpen color="blue" cursor={"pointer"} />
+                    )}
+                  </InputRightElement>
+                </InputGroup>
+
+                <Text color={"red.400"} fontSize={"xs"}>
+                  {errors.password2?.message}
+                </Text>
               </Box>
             </VStack>
             <VStack width={"full"}>

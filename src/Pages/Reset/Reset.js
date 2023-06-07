@@ -9,7 +9,7 @@ import {
   Flex,
   Square,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import AuthLayout from "../../Components/AuthLayout";
 import { useForm } from "react-hook-form";
@@ -108,6 +108,13 @@ function Reset() {
               >
                 Reset
               </Button>
+              <Box width={"full"} textAlign={"center"}>
+                <Link to={-1}>
+                  <Text fontSize={"sm"} color={"brand.700"}>
+                    Go back
+                  </Text>
+                </Link>
+              </Box>
             </VStack>
           </VStack>
         </form>

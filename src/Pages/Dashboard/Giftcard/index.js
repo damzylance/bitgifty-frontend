@@ -5,8 +5,10 @@ import DashboardLayout from "../../../Components/DashboardLayout";
 import Reedeem from "./Reedeem";
 import Create from "./Create";
 import MyCards from "./MyCards";
+import { useParams } from "react-router-dom";
 function Giftcard() {
-  const [page, setPage] = useState("create");
+  const params = useParams();
+  const [page, setPage] = useState(params.page ? params.page : "create");
 
   return (
     <DashboardLayout>

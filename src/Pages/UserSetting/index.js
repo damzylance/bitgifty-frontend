@@ -90,7 +90,6 @@ function UserSetting() {
                 setIsLoading(false);
                 console.log(error);
               });
-            console.log(register);
           })}
         >
           <VStack gap={6} bg="">

@@ -86,7 +86,7 @@ function Dashboard() {
               justifyContent={"space-between"}
               variant={"solid"}
               rightIcon={<ArrowForwardIcon />}
-              onClick={() => navigate("/giftcard")}
+              onClick={() => navigate("/giftcard/create")}
             >
               Create Gift Card
             </Button>
@@ -97,7 +97,7 @@ function Dashboard() {
               justifyContent={"space-between"}
               variant={"outline"}
               rightIcon={<ArrowForwardIcon />}
-              onClick={() => navigate("/giftcard")}
+              onClick={() => navigate("/giftcard/redeem")}
             >
               Redeem Gift Card
             </Button>

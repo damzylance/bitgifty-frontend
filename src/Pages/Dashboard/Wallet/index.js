@@ -97,7 +97,7 @@ function Wallet() {
   }, []);
   return (
     <DashboardLayout>
-      <VStack gap={"10"} width="full">
+      <VStack gap={"10"} width="full" scrollBehavior={"smooth"}>
         <Flex
           wrap={"wrap"}
           gap="10px"
@@ -105,20 +105,9 @@ function Wallet() {
           width="full"
           justifyContent={"space-between"}
         >
-          <Text fontWeight={"bold"} color="brand.700">
+          <Text fontWeight={"bold"} fontSize={"lg"} color="brand.700">
             Wallet
           </Text>
-          <ButtonGroup>
-            <Button size={["sm", "sm", "md"]} variant={"outline"}>
-              Deposit
-            </Button>
-            <Button size={["sm", "sm", "md"]} variant={"outline"}>
-              Withdraw
-            </Button>
-            <Button size={["sm", "sm", "md"]} variant={"outline"}>
-              Transaction History
-            </Button>
-          </ButtonGroup>
         </Flex>
         <Container
           background={"brand.600"}
@@ -174,7 +163,12 @@ function Wallet() {
             </HStack>
           </VStack>
         </Container>
-        <VStack alignItems={"flex-start"} width="full" gap={"10"}>
+        <VStack
+          alignItems={"flex-start"}
+          width="full"
+          gap={"10"}
+          px={["10px", "10px", "none"]}
+        >
           <VStack alignItems={"flex-start"} width="full" gap={"2"}>
             <Flex
               justifyContent={"space-between"}
@@ -190,7 +184,7 @@ function Wallet() {
               <Text>Balance</Text>
               <Text>Action</Text>
             </Flex>
-            <VStack
+            {/* <VStack
               width={"full"}
               alignContent="flex-start"
               gap={"2"}
@@ -211,7 +205,7 @@ function Wallet() {
                 <CoinRow currency={"NGN"} amount={5000} />
                 <CoinRow currency={"GHC"} amount={5000} />
               </VStack>
-            </VStack>
+            </VStack> */}
             <VStack
               width={"full"}
               alignContent="flex-start"
@@ -285,6 +279,10 @@ function CoinRow(props) {
       justifyContent={"space-between"}
       alignItems={"center"}
       flexDir={["column", "column", "row"]}
+      background={"#fff"}
+      padding={"20px 10px"}
+      borderRadius={"10px"}
+      boxShadow={"0px 2px 8px rgba(199, 199, 199, 0.6)"}
     >
       <HStack width={"full"} justifyContent="space-between">
         <Text>{props.currency}</Text>
