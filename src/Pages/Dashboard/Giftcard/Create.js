@@ -266,7 +266,7 @@ function Create() {
                   {errors.amount && errors.amount.message}
                 </FormErrorMessage>
               </FormControl>
-              <Flex
+              {/* <Flex
                 justifyContent={"space-between"}
                 width="full"
                 color={"brand.tx1"}
@@ -315,7 +315,7 @@ function Create() {
                 >
                   100%
                 </Box>
-              </Flex>
+              </Flex> */}
               <Flex color="brand.300" gap={2}>
                 <Text>Wallet Balance:</Text>
                 <Text>{balance}</Text>

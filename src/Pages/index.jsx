@@ -74,21 +74,27 @@ const Home = () => {
   return (
     <VStack
       width={"full"}
-      background={
-        "linear-gradient(234.75deg, #7CA6F8 -8.55%, #DFF7F4 34.87%, #DCE6F9 75.49%, #F7FCFD 110.11%)"
-      }
-      pt={[0, 0, "40px", "40px"]}
-      spacing={0}
+      background={"#FAFCFF"}
+      pt={[0, 0, "0px", "0px"]}
+      gap={"40px"}
     >
-      <Box width={"full"}>
+      <Box
+        width={"full"}
+        position={["relative", "relative", "sticky"]}
+        zIndex={"999"}
+        top={["none", "none", "0"]}
+        left={["none", "none", "0"]}
+        p={"10px"}
+        background={[
+          "brand.700",
+          "brand.700",
+          "linear-gradient(234.75deg, #7CA6F8 -8.55%, #DFF7F4 34.87%, #DCE6F9 75.49%, #F7FCFD 110.11%)",
+        ]}
+      >
         <Box
           width={"full"}
-          top={0}
-          left={0}
           bg={"brand.700"}
           color={"#fff"}
-          p={"10px"}
-          position={"sticky"}
           zIndex={1}
           display={["block", "block", "none"]}
         >
@@ -282,7 +288,7 @@ const Home = () => {
           </HStack>
         </Container>
       </Box>
-      <Box width={"full"} background={"brand.700"} py={"40px"}>
+      <Box width={"full"} py={"40px"}>
         <Container
           maxWidth={["full", "full", "95%", "80%"]}
           pb={["50px", "50px", "300px", "300px", "200px"]}
@@ -490,7 +496,11 @@ const Home = () => {
                 Giftcards in Seconds here at BitGifty!
               </Text>
             </VStack>
-            <Button background={"#fff"} color={"brand.700"}>
+            <Button
+              background={"#fff"}
+              color={"brand.700"}
+              onClick={() => navigate("/register")}
+            >
               Get started
             </Button>
           </VStack>
@@ -858,7 +868,7 @@ const InfoCard = (props) => {
       <hr style={{ borderColor: "rgba(71, 127, 235, 1)", width: "200px" }} />
       <VStack
         alignItems={["center", "center", "flex-start", "flex-start"]}
-        color={"#fff"}
+        color={" #121212"}
         maxW={"350px"}
       >
         <Text

@@ -34,6 +34,7 @@ function MyCards() {
         },
       })
       .then((response) => {
+        console.log(response);
         setLoading(false);
         setCards(response.data.results.reverse());
       })
@@ -86,6 +87,8 @@ function MyCards() {
                 currency={card.currency}
                 code={card.code}
                 status={card.status}
+                receipent={card.receipent_email}
+                createdOn={card.creation_date}
               />
             );
           })
@@ -123,6 +126,7 @@ const Card = (props) => {
           {props.amount} {props.currency}
         </Text>
       </HStack>
+
       <CardModal
         onClose={onClose}
         isOpen={isOpen}
@@ -131,6 +135,8 @@ const Card = (props) => {
         currency={props.currency}
         code={props.code}
         status={props.status}
+        createdOn={new Date(props.createdOn).toLocaleDateString()}
+        receipent={props.receipent}
       />
     </VStack>
   );
@@ -185,6 +191,16 @@ const CardModal = (props) => {
               <Text>{props.currency}</Text>
             </HStack>
           </HStack>
+          <HStack width={"full"} justifyContent={"center"}>
+            <Text>Created on:</Text>
+            <Text fontSize={["md", "md", "lg"]}>{props.createdOn}</Text>
+          </HStack>
+          {props.receipent && (
+            <HStack width={"full"} justifyContent={"center"}>
+              <Text>Recipent:</Text>
+              <Text fontSize={["md", "md", "md"]}>{props.receipent}</Text>
+            </HStack>
+          )}
           <Box width={"full"}>
             {showCode === true && (
               <Text textAlign={"center"} fontSize={"4xl"}>

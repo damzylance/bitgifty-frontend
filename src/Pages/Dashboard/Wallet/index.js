@@ -247,10 +247,10 @@ function Wallet() {
                     return (
                       <CoinRow
                         key={index}
-                        currency={coinWallet[0]}
+                        currency={coinWallet[0].toUpperCase()}
                         address={coinWallet[1].address}
                         amount={balance}
-                        network={coinWallet[0]}
+                        network={coinWallet[0].toUpperCase()}
                         qr={coinWallet[1].qrcode}
                       />
                     );
