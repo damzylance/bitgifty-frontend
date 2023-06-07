@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Flex, Image, Spinner } from "@chakra-ui/react";
+import { Container, Flex, Image, Spinner, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -57,7 +57,9 @@ function AuthLayout(props) {
     <>
       {isLoading ? (
         <Container>
-          <Spinner />
+          <VStack justifyContent={"center"} height={"100vh"} width={"full"}>
+            <Spinner size={"xl"} />
+          </VStack>
         </Container>
       ) : (
         <Flex

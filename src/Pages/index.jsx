@@ -85,11 +85,8 @@ const Home = () => {
         top={["none", "none", "0"]}
         left={["none", "none", "0"]}
         p={"10px"}
-        background={[
-          "brand.700",
-          "brand.700",
-          "linear-gradient(234.75deg, #7CA6F8 -8.55%, #DFF7F4 34.87%, #DCE6F9 75.49%, #F7FCFD 110.11%)",
-        ]}
+        background={"#FAFCFF"}
+        boxShadow={"1px 3px 5px -1px rgba(169,170,176,0.47)"}
       >
         <Box
           width={"full"}
@@ -464,20 +461,18 @@ const Home = () => {
           </VStack>
         </Container>
       </Box>
-      <Box
-        width={"full"}
-        position={"relative"}
-        background={
-          "radial-gradient(204.5% 204.5% at 42.3% -10.75%, #103D96 0%, rgba(16, 61, 150, 0.84) 46.43%, #16D6E7 94.96%)"
-        }
-        py={"70px"}
-      >
+      <Box width={"full"} position={"relative"}>
         <Container
+          py={"70px"}
           maxWidth={["full", "full", "95%", "80%"]}
           position={"relative"}
+          px={"40px"}
+          background={
+            "linear-gradient(234.75deg, #7CA6F8 -8.55%, #DFF7F4 34.87%, #DCE6F9 75.49%, #F7FCFD 110.11%)"
+          }
         >
           <VStack
-            color={"#fff"}
+            color={"#121212"}
             alignItems={"flex-start"}
             gap={"40px"}
             position={"relative"}
@@ -497,8 +492,7 @@ const Home = () => {
               </Text>
             </VStack>
             <Button
-              background={"#fff"}
-              color={"brand.700"}
+              _hover={{ color: "#fff", background: "brand.700" }}
               onClick={() => navigate("/register")}
             >
               Get started
@@ -508,7 +502,8 @@ const Home = () => {
         <Image
           position="absolute"
           src="/assets/images/apphero.png"
-          right={0}
+          width={"450px"}
+          right={190}
           bottom={0}
           display={["none", "none", "block", "block"]}
         />
@@ -638,7 +633,7 @@ const Home = () => {
             width={"full"}
             flexDir={["column", "column", "row", "row"]}
             background={
-              "radial-gradient(204.5% 204.5% at 42.3% -10.75%, #103D96 0%, rgba(16, 61, 150, 0.84) 46.43%, #16D6E7 94.96%)"
+              "linear-gradient(234.75deg, #7CA6F8 -8.55%, #DFF7F4 34.87%, #DCE6F9 75.49%, #F7FCFD 110.11%)"
             }
             padding={"20px"}
             gap={"20px"}
@@ -655,12 +650,12 @@ const Home = () => {
                 textTransform={"uppercase"}
                 fontWeight={700}
                 maxW={"600px"}
-                color={"#fff"}
+                color={"#121212"}
               >
                 Introducing Bitgifty for ios and android
               </Text>
               <Text
-                color={"#fff"}
+                color={"#121212"}
                 fontSize={["14px", "14px", "24px", "24px"]}
                 maxW={"500px"}
               >
