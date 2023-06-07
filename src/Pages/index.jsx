@@ -85,8 +85,8 @@ const Home = () => {
         top={["none", "none", "0"]}
         left={["none", "none", "0"]}
         p={"10px"}
-        background={"#FAFCFF"}
-        boxShadow={"1px 3px 5px -1px rgba(169,170,176,0.47)"}
+        background={["brand.700", "brand.700", "#FAFCFF"]}
+        boxShadow={["none", "none", "1px 3px 5px -1px rgba(169,170,176,0.47)"]}
       >
         <Box
           width={"full"}
