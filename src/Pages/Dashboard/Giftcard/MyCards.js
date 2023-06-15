@@ -13,6 +13,7 @@ import {
   Modal,
   ModalContent,
   ModalHeader,
+  ModalCloseButton,
   ModalBody,
   ModalOverlay,
   useToast,
@@ -158,6 +159,8 @@ const CardModal = (props) => {
         backdropFilter="blur(20px) hue-rotate(10deg)"
       />
       <ModalContent border={"1px solid #cdcdd8"}>
+        <ModalCloseButton />
+
         <Box
           width={"0px"}
           height={"10px"}

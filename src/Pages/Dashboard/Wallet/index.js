@@ -362,7 +362,11 @@ const WalletModal = (props) => {
               <Box textAlign={"center"} mt={"40px"}>
                 <VStack>
                   <Image src={props.qr} />
-                  <Text fontSize="lg" color={"brand.500"} fontWeight={"bold"}>
+                  <Text
+                    fontSize={["sm", "md", "lg"]}
+                    color={"brand.500"}
+                    fontWeight={"bold"}
+                  >
                     {props.address}
                   </Text>
                   <Text fontSize={"s"}>

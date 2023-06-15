@@ -267,8 +267,8 @@ const Home = () => {
                 maxWidth={"500px"}
                 fontWeight={"500"}
               >
-                Send Crypto to your Friends and Family in Style - Create Bitcoin
-                Giftcards in Seconds here at BitGifty!
+                Reward and Gift Crypto in Style - Create Bitcoin Giftcards in
+                Seconds here at BitGifty!
               </Text>
               <Button size={"lg"} onClick={() => navigate("/register")}>
                 Get Started
