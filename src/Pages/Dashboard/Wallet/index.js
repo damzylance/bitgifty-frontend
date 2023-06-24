@@ -196,7 +196,7 @@ function Wallet() {
                   fontSize={"2xl"}
                   fontWeight={"900"}
                 >
-                  &#8358;0
+                  $0
                 </Text>
               </VStack>
               <Box width={"150px"}>
