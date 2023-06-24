@@ -32,33 +32,6 @@ import { Doughnut } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const data = {
-  labels: ["BTC", "ETH", "BNB", "CELO", "USDT", "CUSD"],
-  datasets: [
-    {
-      label: "# of Votes",
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        "rgba(255, 255, 251, 0.8)",
-        "rgba(54, 162, 235, 0.2)",
-        "rgba(255, 206, 86, 0.2)",
-        "rgba(75, 192, 192, 0.2)",
-        "rgba(153, 102, 255, 0.2)",
-        "rgba(255, 159, 64, 0.2)",
-      ],
-      borderColor: [
-        "rgba(255, 99, 132, 1)",
-        "rgba(54, 162, 235, 1)",
-        "rgba(255, 206, 86, 1)",
-        "rgba(75, 192, 192, 1)",
-        "rgba(153, 102, 255, 1)",
-        "rgba(255, 159, 64, 1)",
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
-
 const chartOptions = {
   plugins: {
     legend: {
@@ -68,7 +41,75 @@ const chartOptions = {
 };
 
 function Wallet() {
+  const [rates, setRates] = useState([]);
+  const [walletBalances, setWalletBalances] = useState([]);
+  let urls = [
+    `https://api.tatum.io/v3/tatum/rate/BTC`,
+    `https://api.tatum.io/v3/tatum/rate/CELO`,
+    `https://api.tatum.io/v3/tatum/rate/USDT`,
+  ];
+  const options = {
+    headers: { "x-api-key": "b04e15d2-f32b-4c6b-a4d5-20c203c7cf80" },
+  };
+  // const fetchRates = async () => {
+  //   await axios
+  //     .all([
+  //       axios.get("https://api.tatum.io/v3/tatum/rate/BTC", options),
+  //       axios.get("https://api.tatum.io/v3/tatum/rate/CELO", options),
+  //       axios.get("https://api.tatum.io/v3/tatum/rate/USDT", options),
+  //     ])
+  //     .then(
+  //       axios.spread(async (data1, data2, data3) => {
+  //         const toFloat = (item) => {
+  //           parseFloat(item);
+  //         };
+  //         // output of req.
+  //         setRates([data1.data.value, data2.data.value, data3.data.value]);
+  //         setBalance(
+  //           parseFloat(data1.data.value) +
+  //             parseFloat(data2.data.value) +
+  //             parseFloat(data3.data.value)
+  //         );
+  //       })
+  //     );
+  // };
+
+  // const dollarBalance = async (coin) => {
+  //   await axios
+  //     .get(`https://api.tatum.io/v3/tatum/rate/${coin}`, options)
+  //     .then((response) => {
+  //       const usdValue = response.data.value;
+  //       setRates(...rates, usdValue);
+  //     });
+  // };
+  const data = {
+    labels: ["BTC", "ETH", "BNB", "CELO", "USDT", "CUSD"],
+    datasets: [
+      {
+        label: "# of Votes",
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: [
+          "rgba(255, 255, 251, 0.8)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
   const [wallets, setWallets] = useState([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState(0);
 
@@ -94,7 +135,10 @@ function Wallet() {
       .catch(function (error) {
         console.log(error);
       });
+
+    // fetchRates();
   }, []);
+  console.table(rates);
   return (
     <DashboardLayout>
       <VStack gap={"10"} width="full" scrollBehavior={"smooth"}>
@@ -146,14 +190,14 @@ function Wallet() {
                   fontWeight={"900"}
                   color={"whiteAlpha.900"}
                 >
-                  0.01 BTC
+                  0 CELO
                 </Text>
                 <Text
                   color={"whiteAlpha.800"}
                   fontSize={"2xl"}
                   fontWeight={"900"}
                 >
-                  &#8358;200,000
+                  &#8358;0
                 </Text>
               </VStack>
               <Box width={"150px"}>

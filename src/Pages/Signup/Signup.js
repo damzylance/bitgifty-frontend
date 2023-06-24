@@ -41,7 +41,11 @@ function Signup() {
       .then(function (response) {
         console.log(response);
         setIsLoading(false);
-        toast({ title: "Registration Successful", status: "success" });
+        toast({
+          title:
+            "Registration Successful, check your emai to verify your account",
+          status: "success",
+        });
         navigate("/login");
       })
       .catch(function (error) {
@@ -87,7 +91,7 @@ function Signup() {
               Create New Account
             </Text>
             <VStack w={"full"} gap={"2"}>
-              <Box width={"full"}>
+              {/* <Box width={"full"}>
                 <Input
                   minLength={5}
                   maxLength={150}
@@ -103,7 +107,7 @@ function Signup() {
                 <Text color={"red.400"} fontSize={"xs"}>
                   {errors.username?.message}
                 </Text>
-              </Box>
+              </Box> */}
               <Box width={"full"}>
                 <Input
                   name="email"

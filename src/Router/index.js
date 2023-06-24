@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "../Pages/Login/Login";
 import Signup from "../Pages/Signup/Signup";
+import ConfirmEmail from "../Pages/Signup/ConfirmEmail";
 import UserSetting from "../Pages/UserSetting";
 import Dashboard from "../Pages/Dashboard";
 import Giftcard from "../Pages/Dashboard/Giftcard";
@@ -12,6 +13,7 @@ import PasswordResetConFirm from "../Pages/ChangePassword/ChangePassword";
 import CoinDetails from "../Pages/Dashboard/Wallet/Wallet";
 import Home from "../Pages";
 import Notfound from "../Pages/404";
+
 function Router() {
   return (
     <BrowserRouter>
@@ -19,6 +21,11 @@ function Router() {
         <Route exact path="/" element={<Home />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/register" element={<Signup />} />
+        <Route
+          exact
+          path="/auth/email-confirm/:token"
+          element={<ConfirmEmail />}
+        />
         <Route exact path="/password-reset" element={<Reset />} />
         <Route
           exact

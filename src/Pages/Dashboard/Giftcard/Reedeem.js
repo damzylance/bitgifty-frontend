@@ -56,7 +56,7 @@ function Reedeem() {
       .catch(function (error) {
         console.log(error.response);
         if (error.response?.status === 400) {
-          toast({ title: "Error", status: "error" });
+          toast({ title: "Gift card code invalid", status: "error" });
         }
         setIsLoading(false);
       });
