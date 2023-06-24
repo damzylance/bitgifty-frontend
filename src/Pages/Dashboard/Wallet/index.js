@@ -109,7 +109,6 @@ function Wallet() {
     ],
   };
   const [wallets, setWallets] = useState([]);
-
   const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState(0);
 
@@ -293,7 +292,7 @@ function Wallet() {
                         key={index}
                         currency={coinWallet[0].toUpperCase()}
                         address={coinWallet[1].address}
-                        amount={balance}
+                        amount={isNaN(balance) ? 0 : balance}
                         network={coinWallet[0].toUpperCase()}
                         qr={coinWallet[1].qrcode}
                       />

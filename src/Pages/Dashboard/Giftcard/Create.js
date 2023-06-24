@@ -24,10 +24,12 @@ import { motion } from "framer-motion";
 
 function Create() {
   const [wallets, setWallets] = useState([]);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm();
   const toast = useToast();
   const [walletIndex, setWalletIndex] = useState(0);
@@ -36,6 +38,11 @@ function Create() {
     width: undefined,
     height: undefined,
   });
+  const options = {
+    headers: { "x-api-key": process.env.REACT_APP_RATE_KEY },
+  };
+
+  const [fee, setFee] = useState(0);
   const [amountMin, setAmountMin] = useState(0.0003);
   const [balance, setBalance] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +50,7 @@ function Create() {
   const [templates, setTemplates] = useState([]);
   const [template, setTemplate] = useState();
   const [checkEmail, setCheckEmail] = useState(false);
+  const [totalAmount, setTotalAmount] = useState(0);
   const fetchWallets = async () => {
     await axios
       .get(`${process.env.REACT_APP_BASE_URL}wallets/`, {
@@ -64,28 +72,53 @@ function Create() {
         console.log(error);
       });
   };
-  const handleCurrencyChange = (e) => {
+
+  const handleCurrencyChange = async (e) => {
     const network = `${e.target.value
       .slice(0, 1)
       .toUpperCase()}${e.target.value.slice(1, e.target.value.length)}`;
     for (let index = 0; index < wallets.length; index++) {
       if (wallets[index][0] === network) {
+        const btcBalance =
+          wallets[index][1].info.incoming - wallets[index][1].info.outgoing;
+        setBalance(isNaN(btcBalance) ? 0 : btcBalance);
         if (network === "Bitcoin") {
-          setBalance(
-            wallets[index][1].info.incoming - wallets[index][1].info.outgoing
-          );
-          setAmountMin(0.0003);
+          await axios
+            .post(
+              "https://api.tatum.io/v3/tatum/rate/",
+              [{ batchId: "one", basePair: "USD", currency: "BTC" }],
+              options
+            )
+            .then((response) => {
+              setAmountMin(
+                parseFloat(100.0 / parseFloat(response.data[0].value))
+              );
+              setFee(0.0008);
+              setTotalAmount(parseFloat(getValues("amount")) + 0.0008);
+            })
+            .catch((errors) => {
+              console.log(errors);
+            });
         } else if (network === "Celo") {
           setBalance(wallets[index][1].info.celo);
-          setAmountMin(2);
+          setFee(2);
+          setAmountMin(10);
+          setTotalAmount(parseFloat(getValues("amount")) + 2);
         } else if (network === "Ethereum") {
           setAmountMin(0.003);
           setBalance(wallets[index][1].info.balance);
         } else if (network === "Tron") {
-          setBalance(wallets[index][1].info.balance / 1000000);
+          const tronBalance = wallets[index][1].info.balance / 1000000;
+          setBalance(isNaN(tronBalance) ? 0 : tronBalance);
           setAmountMin(5);
+        } else if (network === "Bnb") {
+          setBalance(0);
+          setFee(0.0005);
+          setAmountMin(0.02);
+          setTotalAmount(parseFloat(getValues("amount")) + 0.0005);
         }
       }
+      setTotalAmount(parseFloat(getValues("amount")) + fee);
     }
   };
   const fetchCardTemplates = async () => {
@@ -109,7 +142,7 @@ function Create() {
   };
   const onSubmit = async (data) => {
     data.image = template.id;
-    data.amount = parseFloat(data.amount);
+    data.amount = parseFloat(data.amount) + fee;
     data.quantity = 1;
     console.log(data);
     setIsLoading(true);
@@ -238,7 +271,6 @@ function Create() {
                 {...register("currency", { onChange: handleCurrencyChange })}
               >
                 {wallets.map((wallet, index) => {
-                  console.log(wallet);
                   return (
                     <option value={wallet[0].toLowerCase()} key={index}>
                       {wallet[0]}
@@ -255,6 +287,8 @@ function Create() {
                   name="amount"
                   type={"number"}
                   {...register("amount", {
+                    onChange: (e) =>
+                      setTotalAmount(parseFloat(e.target.value) + fee),
                     max: { value: balance, message: "Insufficient funds" },
                     min: {
                       value: amountMin,
@@ -354,11 +388,11 @@ function Create() {
               <VStack width={"full"} alignItems="flex-start">
                 <Flex width={"full"} justifyContent={"space-between"}>
                   <Text fontSize={"xs"}>Fees</Text>
-                  <Text fontSize={"xs"}>0</Text>
+                  <Text fontSize={"xs"}>{fee}</Text>
                 </Flex>
                 <Flex width={"full"} justifyContent={"space-between"}>
                   <Text fontSize={"s"}>Total Amount</Text>
-                  <Text fontSize={"s"}>0.12</Text>
+                  <Text fontSize={"s"}> {totalAmount}</Text>
                 </Flex>
               </VStack>
               <Box textAlign={"right"} width={"full"}>
