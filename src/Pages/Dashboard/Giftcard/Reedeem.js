@@ -98,7 +98,7 @@ function Reedeem() {
                 type={"text"}
                 borderColor={"brand.700"}
                 width="80%"
-                placeholder={"6 digit character"}
+                placeholder={"Paset code here"}
                 size={"lg"}
                 bg="bg1"
                 required

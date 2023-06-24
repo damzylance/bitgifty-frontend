@@ -122,7 +122,7 @@ function DashboardLayout(props) {
                       <RxCaretRight fontSize={"24px"} />
                     </HStack>
                   </Link>
-                  <Link to={"/wallet"} style={{ width: "100%" }}>
+                  <Link onClick={() => logOut()} style={{ width: "100%" }}>
                     <HStack
                       width={"full"}
                       justifyContent={"space-between"}
