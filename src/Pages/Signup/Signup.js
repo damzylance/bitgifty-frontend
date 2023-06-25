@@ -48,8 +48,6 @@ function Signup() {
           status: "success",
         });
         setSuccess(true);
-
-        navigate("/login");
       })
       .catch(function (error) {
         if (error.response?.status === 400) {
