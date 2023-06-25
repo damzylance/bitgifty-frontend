@@ -43,7 +43,9 @@ function ConfirmEmail() {
           title: "Email confirmation successful.",
           status: "success",
         });
-        navigate("/login");
+        setTimeout(() => {
+          navigate("/login");
+        }, 5000);
       })
       .catch(function (error) {
         console.log(error);
@@ -53,17 +55,18 @@ function ConfirmEmail() {
         );
         if (error.response?.status === 400) {
           toast({
-            title: "invalid verififcation link",
+            title: "Verification failed",
             status: "error",
           });
         } else {
           toast({
-            title: "An error occured",
+            title: "Verification failed",
             status: "error",
           });
         }
       });
   };
+
   useEffect(() => {
     console.log(token);
     confirm();

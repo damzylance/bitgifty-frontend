@@ -58,7 +58,7 @@ function AuthLayout(props) {
       {isLoading ? (
         <Container>
           <VStack justifyContent={"center"} height={"100vh"} width={"full"}>
-            <Spinner size={"xl"} />
+            <Image src="/assets/images/logo-outline.png" width={"100px"} />
           </VStack>
         </Container>
       ) : (

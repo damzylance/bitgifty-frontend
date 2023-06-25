@@ -98,7 +98,7 @@ function Reedeem() {
                 type={"text"}
                 borderColor={"brand.700"}
                 width="80%"
-                placeholder={"Paset code here"}
+                placeholder={"Paste code here"}
                 size={"lg"}
                 bg="bg1"
                 required
@@ -131,7 +131,7 @@ function Reedeem() {
           setShowHistory(!showHistory);
         }}
       >
-        Show History
+        {showHistory ? "Hide History" : "Show History"}
       </Text>
       {showHistory && (
         <Container mt={"10px"}>
