@@ -293,7 +293,7 @@ function Wallet() {
                         currency={coinWallet[0].toUpperCase()}
                         address={coinWallet[1].address}
                         amount={isNaN(balance) ? 0 : balance}
-                        network={coinWallet[0].toUpperCase()}
+                        network={coinWallet[0]}
                         qr={coinWallet[1].qrcode}
                       />
                     );
@@ -497,43 +497,61 @@ const WalletModal = (props) => {
                         }}
                         onChange={(e) => {
                           let amount = e.target.value;
-                          let floatAmount;
-                          floatAmount = parseFloat(
+                          let toFloatAmount;
+                          toFloatAmount = parseFloat(
                             amount.replaceAll(",", "")
                           ).toFixed(18);
                           if (props.network === "Bitcoin") {
                             let btcErrors = [];
 
-                            if (floatAmount < 0.0005) {
+                            console.log("error", toFloatAmount);
+                            if (toFloatAmount < 0.0005) {
+                              alert();
                               btcErrors.push("Minimum withdrawal is 0.0005 ");
                               setErrors(btcErrors);
-                              console.log(btcErrors);
                             } else {
                               setErrors([]);
-                              setFloatAmount(floatAmount.toString());
-                              console.log(floatAmount);
+                              setFloatAmount(toFloatAmount.toString());
                             }
                           } else if (props.network === "Celo") {
                             let coinErrors = [];
-                            if (floatAmount < 2) {
-                              coinErrors.push("Minimum withdrawal is 2  ");
+                            if (toFloatAmount < 2) {
+                              coinErrors.push("Minimum withdrawal is 2");
                               setErrors(coinErrors);
                               console.log(coinErrors);
                             } else {
                               setErrors([]);
-                              setFloatAmount(floatAmount.toString());
-                              console.log(floatAmount);
+                              setFloatAmount(toFloatAmount.toString());
                             }
                           } else if (props.network === "Tron") {
                             let coinErrors = [];
-                            if (floatAmount < 2) {
+                            if (toFloatAmount < 2) {
                               coinErrors.push("Minimum withdrawal is 2  ");
                               setErrors(coinErrors);
                               console.log(coinErrors);
                             } else {
                               setErrors([]);
-                              setFloatAmount(floatAmount.toString());
-                              console.log(floatAmount);
+                              setFloatAmount(toFloatAmount.toString());
+                            }
+                          } else if (props.network === "Bnb") {
+                            let coinErrors = [];
+                            if (toFloatAmount < 0.002) {
+                              coinErrors.push("Minimum withdrawal is 0.002  ");
+                              setErrors(coinErrors);
+                              console.log(coinErrors);
+                            } else {
+                              setErrors([]);
+                              setFloatAmount(toFloatAmount.toString());
+                            }
+                          } else if (props.network === "Ethereum") {
+                            let coinErrors = [];
+                            if (toFloatAmount < 0.001) {
+                              coinErrors.push("Minimum withdrawal is 0.001  ");
+                              setErrors(coinErrors);
+                              console.log(coinErrors);
+                            } else {
+                              setErrors([]);
+                              setFloatAmount(toFloatAmount.toString());
                             }
                           }
                         }}
