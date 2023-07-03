@@ -64,6 +64,25 @@ function Create() {
           const entries = Object.entries(response.data);
           console.log(entries);
           setIsLoading(false);
+
+          if (entries[0][0] === "Celo") {
+            setBalance(entries[0][1].info.celo);
+            setFee(2);
+          } else if (entries[0][0] === "Ethereum") {
+            setBalance(entries[0][1].info.balance);
+            setFee(0.0004);
+          } else if (entries[0][0] === "Tron") {
+            setBalance(entries[0][1].info.balance);
+            setFee(2);
+          } else if (entries[0][0] === "Bitcoin") {
+            setBalance(
+              entries[0][1].info.incoming - entries[0][1].info.outgoing
+            );
+            setFee(0.0008);
+          } else if (entries[0][0] === "Bnb") {
+            setBalance(0);
+            setFee(0.0005);
+          }
           setWallets(entries);
           localStorage.setItem("wallets", JSON.stringify(entries));
         }
@@ -103,19 +122,23 @@ function Create() {
           setBalance(wallets[index][1].info.celo);
           setFee(2);
           setAmountMin(10);
-          setTotalAmount(parseFloat(getValues("amount")) + 2);
+          setTotalAmount(parseFloat(getValues("amount")) + fee);
         } else if (network === "Ethereum") {
           setAmountMin(0.003);
           setBalance(wallets[index][1].info.balance);
+          setFee(0.0004);
+          setTotalAmount(parseFloat(getValues("amount")) + fee);
         } else if (network === "Tron") {
           const tronBalance = wallets[index][1].info.balance / 1000000;
+          setFee(2);
           setBalance(isNaN(tronBalance) ? 0 : tronBalance);
           setAmountMin(5);
+          setTotalAmount(parseFloat(getValues("amount")) + fee);
         } else if (network === "Bnb") {
           setBalance(0);
           setFee(0.0005);
           setAmountMin(0.02);
-          setTotalAmount(parseFloat(getValues("amount")) + 0.0005);
+          setTotalAmount(parseFloat(getValues("amount")) + fee);
         }
       }
       setTotalAmount(parseFloat(getValues("amount")) + fee);
@@ -392,7 +415,10 @@ function Create() {
                 </Flex>
                 <Flex width={"full"} justifyContent={"space-between"}>
                   <Text fontSize={"s"}>Total Amount</Text>
-                  <Text fontSize={"s"}> {totalAmount}</Text>
+                  <Text fontSize={"s"}>
+                    {" "}
+                    {isNaN(totalAmount) ? 0 : totalAmount}
+                  </Text>
                 </Flex>
               </VStack>
               <Box textAlign={"right"} width={"full"}>
