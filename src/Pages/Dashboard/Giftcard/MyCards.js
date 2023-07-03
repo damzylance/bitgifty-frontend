@@ -206,7 +206,7 @@ const CardModal = (props) => {
           )}
           <Box width={"full"}>
             {showCode === true && (
-              <Text textAlign={"center"} fontSize={"4xl"}>
+              <Text textAlign={"center"} fontSize={"xl"}>
                 {props.code}
               </Text>
             )}

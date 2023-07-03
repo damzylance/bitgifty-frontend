@@ -998,36 +998,6 @@ const ResultCard = ({ text, value }) => {
   );
 };
 
-const Accordio = () => {
-  const [openAccordion, setOpenAccordion] = useState(false);
-  return (
-    <VStack
-      bg={"#C6E3F5"}
-      alignItems={"flex-start"}
-      width={"full"}
-      p={"10px"}
-      border={"2px solid #103D96"}
-      borderRadius={"10px"}
-    >
-      <HStack justify={"space-between"} width={"full"}>
-        <Text fontSize={"16px"} fontWeight={"500"} maxWidth={"800px"}>
-          How long does it take for gift cards to be delivered to recipients?
-        </Text>
-        <PlusSquareIcon
-          fontSize={"24px"}
-          onClick={() => setOpenAccordion(!openAccordion)}
-        />
-      </HStack>
-      {openAccordion && (
-        <Text fontSize={"16px"} height={"0px"} transition={"height 0.4s "}>
-          Give the Gift of Choice: Create and redeem your crypto gift cards here
-          at Gifty! Give the Gift of Choice
-        </Text>
-      )}
-    </VStack>
-  );
-};
-
 const Ruler = (props) => {
   return (
     <Box

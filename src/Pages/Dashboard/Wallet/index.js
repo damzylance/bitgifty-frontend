@@ -500,7 +500,7 @@ const WalletModal = (props) => {
                           let toFloatAmount;
                           toFloatAmount = parseFloat(
                             amount.replaceAll(",", "")
-                          ).toFixed(18);
+                          ).toFixed(7);
                           if (props.network === "Bitcoin") {
                             let btcErrors = [];
 
@@ -541,7 +541,7 @@ const WalletModal = (props) => {
                               console.log(coinErrors);
                             } else {
                               setErrors([]);
-                              setFloatAmount(toFloatAmount.toString());
+                              setFloatAmount(toFloatAmount);
                             }
                           } else if (props.network === "Ethereum") {
                             let coinErrors = [];

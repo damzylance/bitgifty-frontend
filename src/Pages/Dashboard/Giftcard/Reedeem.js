@@ -56,7 +56,11 @@ function Reedeem() {
       .catch(function (error) {
         console.log(error.response);
         if (error.response?.status === 400) {
-          toast({ title: "Gift card code invalid", status: "error" });
+          if (error.response?.data?.error === "gift card not found") {
+            toast({ title: "Gift card code invalid", status: "error" });
+          } else {
+            toast({ title: error.response?.data?.error, status: "error" });
+          }
         }
         setIsLoading(false);
       });
