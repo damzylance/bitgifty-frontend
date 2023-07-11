@@ -141,17 +141,6 @@ function Wallet() {
   return (
     <DashboardLayout>
       <VStack gap={"10"} width="full" scrollBehavior={"smooth"}>
-        <Flex
-          wrap={"wrap"}
-          gap="10px"
-          alignItems="center"
-          width="full"
-          justifyContent={"space-between"}
-        >
-          <Text fontWeight={"bold"} fontSize={"lg"} color="brand.700">
-            Wallet
-          </Text>
-        </Flex>
         <Container
           background={"brand.600"}
           py={"4"}

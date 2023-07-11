@@ -3,20 +3,19 @@ import {
   VStack,
   Text,
   Input,
-  Select,
   Button,
-  Flex,
   InputGroup,
-  InputLeftAddon,
   Box,
   useToast,
+  InputRightElement,
 } from "@chakra-ui/react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import AuthLayout from "../../Components/AuthLayout";
 import React, { useRef, useState } from "react";
+import { RxEyeClosed, RxEyeOpen } from "react-icons/rx";
 
 function PasswordResetConFirm() {
   const params = useParams();
@@ -30,7 +29,7 @@ function PasswordResetConFirm() {
   } = useForm();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [serverError, setServerError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
   const onSubmit = async (data) => {
     data.token = token;
@@ -84,39 +83,69 @@ function PasswordResetConFirm() {
             </Text>
             <VStack w={"full"} gap={"2"}>
               <Box width={"full"}>
-                <Input
-                  size={"md"}
-                  name="new_password1"
-                  placeholder="New Password"
-                  {...register("new_password1", {
-                    minLength: "8",
-                    pattern: {
-                      value:
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
-                      message:
-                        "Password must contain, one uppercase, number and a special character",
-                    },
-                  })}
-                  type={"password"}
-                  required
-                  error={errors.new_password1}
-                />
+                <InputGroup>
+                  <Input
+                    size={"md"}
+                    name="new_password1"
+                    placeholder="New Password"
+                    {...register("new_password1", {
+                      minLength: "8",
+                      pattern: {
+                        value:
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
+                        message:
+                          "Password must contain, one uppercase, number and a special character",
+                      },
+                    })}
+                    type={showPassword ? "text" : "password"}
+                    required
+                    error={errors.new_password1}
+                  />
+                  <InputRightElement
+                    onClick={() => {
+                      setShowPassword(!showPassword);
+                    }}
+                  >
+                    {showPassword ? (
+                      <RxEyeClosed color="blue" cursor={"pointer"} />
+                    ) : (
+                      <RxEyeOpen color="blue" cursor={"pointer"} />
+                    )}
+                  </InputRightElement>
+                </InputGroup>
+
                 <Text fontSize={"xs"}>{errors.new_password1?.message}</Text>
               </Box>
               <Box width={"full"}>
-                <Input
-                  name="new_password2"
-                  size={"md"}
-                  placeholder="Confirm New Password"
-                  {...register("new_password2", {
-                    validate: (value) =>
-                      value === new_password1.current ||
-                      "The passwords do not match",
-                  })}
-                  error={errors.new_password2}
-                  required
-                  type={"password"}
-                />
+                <InputGroup>
+                  <Input
+                    name="new_password2"
+                    size={"md"}
+                    placeholder="Confirm New Password"
+                    {...register("new_password2", {
+                      validate: (value) =>
+                        value === new_password1.current ||
+                        "The passwords do not match",
+                    })}
+                    error={errors.new_password2}
+                    required
+                    type={showPassword ? "text" : "password"}
+                    onClick={() => {
+                      setShowPassword(true);
+                    }}
+                  />
+                  <InputRightElement
+                    onClick={() => {
+                      setShowPassword(!showPassword);
+                    }}
+                  >
+                    {showPassword ? (
+                      <RxEyeClosed color="blue" cursor={"pointer"} />
+                    ) : (
+                      <RxEyeOpen color="blue" cursor={"pointer"} />
+                    )}
+                  </InputRightElement>
+                </InputGroup>
                 <Text fontSize={"xs"}>{errors.new_password2?.message}</Text>
               </Box>
             </VStack>
