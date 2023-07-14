@@ -834,7 +834,7 @@ const Home = () => {
                 </Text>
                 <Link>FAQ</Link>
                 <Link>About Us</Link>
-                <Link>Contact Us</Link>
+                <Link to={"/contact-us"}>Contact Us</Link>
               </VStack>
             </HStack>
           </HStack>

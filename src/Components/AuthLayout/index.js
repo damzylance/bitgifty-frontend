@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 
 function AuthLayout(props) {
   const toast = useToast();
@@ -69,9 +70,22 @@ function AuthLayout(props) {
           justifyContent="center"
           gap={4}
         >
-          <Flex justifyContent={"center"}>
-            <Image src="/assets/images/logo-outline.png" width={"100px"} />
-          </Flex>
+          <Container maxW={"480px"} py={10} px={4}>
+            <Flex
+              width={"full"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <ArrowBackIcon
+                fontSize={"24px"}
+                cursor={"pointer"}
+                onClick={() => navigate(-1)}
+              />
+              <Flex width={"full"} justifyContent={"center"}>
+                <Image src="/assets/images/logo-outline.png" width={"100px"} />
+              </Flex>
+            </Flex>
+          </Container>
 
           {props.children}
         </Flex>

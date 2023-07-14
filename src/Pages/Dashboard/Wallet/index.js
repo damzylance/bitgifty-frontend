@@ -42,21 +42,30 @@ const chartOptions = {
 
 function Wallet() {
   const [rates, setRates] = useState([]);
-  const [walletBalances, setWalletBalances] = useState([]);
-  let urls = [
-    `https://api.tatum.io/v3/tatum/rate/BTC`,
-    `https://api.tatum.io/v3/tatum/rate/CELO`,
-    `https://api.tatum.io/v3/tatum/rate/USDT`,
-  ];
-  const options = {
-    headers: { "x-api-key": "b04e15d2-f32b-4c6b-a4d5-20c203c7cf80" },
-  };
+  // const [walletBalances, setWalletBalances] = useState([]);
+  // let urls = [
+  //   `https://api.tatum.io/v3/tatum/rate/BTC`,
+  //   `https://api.tatum.io/v3/tatum/rate/CELO`,
+  //   `https://api.tatum.io/v3/tatum/rate/USDT`,
+  // ];
+  // const options = {
+  //   headers: { "x-api-key": "b04e15d2-f32b-4c6b-a4d5-20c203c7cf80" },
+  // };
   // const fetchRates = async () => {
   //   await axios
   //     .all([
-  //       axios.get("https://api.tatum.io/v3/tatum/rate/BTC", options),
-  //       axios.get("https://api.tatum.io/v3/tatum/rate/CELO", options),
-  //       axios.get("https://api.tatum.io/v3/tatum/rate/USDT", options),
+  //       axios.get(
+  //         "https://api.tatum.io/v3/tatum/rate/BTC?basePair=USD",
+  //         options
+  //       ),
+  //       axios.get(
+  //         "https://api.tatum.io/v3/tatum/rate/CELO?basePair=USD",
+  //         options
+  //       ),
+  //       axios.get(
+  //         "https://api.tatum.io/v3/tatum/rate/USDT?basePair=USD",
+  //         options
+  //       ),
   //     ])
   //     .then(
   //       axios.spread(async (data1, data2, data3) => {
@@ -65,11 +74,6 @@ function Wallet() {
   //         };
   //         // output of req.
   //         setRates([data1.data.value, data2.data.value, data3.data.value]);
-  //         setBalance(
-  //           parseFloat(data1.data.value) +
-  //             parseFloat(data2.data.value) +
-  //             parseFloat(data3.data.value)
-  //         );
   //       })
   //     );
   // };
@@ -110,7 +114,6 @@ function Wallet() {
   };
   const [wallets, setWallets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [balance, setBalance] = useState(0);
 
   useEffect(() => {
     axios
@@ -178,7 +181,7 @@ function Wallet() {
                   fontWeight={"900"}
                   color={"whiteAlpha.900"}
                 >
-                  0 CELO
+                  0 CUSD
                 </Text>
                 <Text
                   color={"whiteAlpha.800"}
@@ -364,7 +367,6 @@ function CoinRow(props) {
   );
 }
 const WalletModal = (props) => {
-  const userWallet = localStorage.getItem("wallet");
   const btnRef = React.useRef();
   const { register, handleSubmit } = useForm();
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -388,7 +390,17 @@ const WalletModal = (props) => {
           <>
             {" "}
             <DrawerHeader color={"brand.700"} textAlign={"center"}>
-              {props.network} Wallet Address
+              {props.network} Wallet Address (
+              {props.network === "Celo"
+                ? "Celo Network"
+                : props.network === "Ethereum"
+                ? "ERC 20"
+                : props.network === "Tron"
+                ? "TRC 20"
+                : props.network === "Bnb"
+                ? "Binance Chain"
+                : "Bitcoin"}
+              )
             </DrawerHeader>
             <DrawerBody>
               <Box textAlign={"center"} mt={"40px"}>

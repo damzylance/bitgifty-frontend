@@ -13,12 +13,14 @@ import PasswordResetConFirm from "../Pages/ChangePassword/ChangePassword";
 import CoinDetails from "../Pages/Dashboard/Wallet/Wallet";
 import Home from "../Pages";
 import Notfound from "../Pages/404";
+import ContactUs from "../Pages/Contact";
 
 function Router() {
   return (
     <BrowserRouter>
       <Routes>
         <Route exact path="/" element={<Home />} />
+        <Route exact path="/contact-us" element={<ContactUs />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/register" element={<Signup />} />
         <Route
