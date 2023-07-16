@@ -175,12 +175,6 @@ function Signup() {
                           value: 8,
                           message: "Must contain at least 8 characters",
                         },
-                        pattern: {
-                          value:
-                            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
-                          message:
-                            "Password must contain, one uppercase, number and a special character",
-                        },
                       })}
                       type={showPassword ? "text" : "password"}
                       required

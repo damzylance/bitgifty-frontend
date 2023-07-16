@@ -165,7 +165,7 @@ function Create() {
   };
   const onSubmit = async (data) => {
     data.image = template.id;
-    data.amount = parseFloat(data.amount) + fee;
+    data.amount = parseFloat(data.amount);
     data.quantity = 1;
     console.log(data);
     setIsLoading(true);
