@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import SettingsLayout from "../SettingsLayout";
@@ -28,8 +28,26 @@ import { AiFillPlusSquare } from "react-icons/ai";
 import axios from "axios";
 const Payout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [bankAccount, setBankAccount] = useState(null);
 
-  const banks = [];
+  const fetchBankAccounts = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_BASE_URL}wallets/naira/`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((response) => {
+        setBankAccount(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    fetchBankAccounts();
+  }, []);
+
   return (
     <SettingsLayout>
       <VStack width={"full"} gap={"20px"}>
@@ -41,32 +59,39 @@ const Payout = () => {
             <Text fontSize={"md"} color={"gray.700"}>
               Add Payment Method
             </Text>
-            <VStack
-              width="full"
-              gap={"10px"}
-              p={"20px"}
-              borderRadius={"lg"}
-              border={"1px solid #90d4e4"}
-              alignItems={"flex-start"}
-            >
-              <Text
-                pl={"10px"}
-                lineHeight={"100%"}
-                color={"gray.600"}
-                fontWeight={"semibold"}
-                borderLeft={"2px solid #477FEB "}
+            {bankAccount ? (
+              <VStack
+                width="full"
+                gap={"10px"}
+                p={"20px"}
+                borderRadius={"lg"}
+                border={"1px solid #90d4e4"}
+                alignItems={"flex-start"}
               >
-                Bank Name
+                <Text
+                  pl={"10px"}
+                  lineHeight={"100%"}
+                  color={"gray.600"}
+                  fontWeight={"semibold"}
+                  borderLeft={"2px solid #477FEB "}
+                >
+                  {bankAccount.bank_name}
+                </Text>
+                <HStack
+                  width={"full"}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
+                >
+                  <Text color={"gray.500"}>{bankAccount.account_name}</Text>
+                  <Text color={"gray.500"}>{bankAccount.account_number}</Text>
+                </HStack>
+              </VStack>
+            ) : (
+              <Text fontSize={"md"} color={"gray.700"}>
+                You don't have a payment method. Please set one
               </Text>
-              <HStack
-                width={"full"}
-                alignItems={"center"}
-                justifyContent={"space-between"}
-              >
-                <Text color={"gray.500"}>John Doe</Text>
-                <Text color={"gray.500"}>1234567890</Text>
-              </HStack>
-            </VStack>
+            )}
+
             <HStack
               width={"full"}
               border={"1px solid"}
@@ -105,11 +130,12 @@ const PayoutModal = (props) => {
   const { register, handleSubmit } = useForm();
   const toast = useToast();
   const [isloading, setIsLoading] = useState(false);
+
   const onSubmit = async (data) => {
     console.log(data);
     setIsLoading(true);
     await axios
-      .post(`${process.env.REACT_APP_BASE_URL}wallets/naira/`, data, {
+      .put(`${process.env.REACT_APP_BASE_URL}wallets/naira/`, data, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
@@ -140,6 +166,7 @@ const PayoutModal = (props) => {
       });
     console.log(data);
   };
+
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose}>
       <ModalOverlay />
