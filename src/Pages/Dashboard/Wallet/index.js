@@ -134,16 +134,16 @@ function Wallet() {
             const coinWallet = entries[index];
             if (coinWallet[0] === "Bitcoin") {
               balances.push({
-                btc: coinWallet[1].info.incoming - coinWallet[1].info.outgoing,
+                BTC: coinWallet[1].info.incoming - coinWallet[1].info.outgoing,
               });
             } else if (coinWallet[0] === "Bnb") {
-              balances.push({ bnb: 0 });
+              balances.push({ BNB: 0 });
             } else if (coinWallet[0] === "Celo") {
-              balances.push({ celo: coinWallet[1].info.celo });
+              balances.push({ CELO: coinWallet[1].info.celo });
             } else if (coinWallet[0] === "Ethereum") {
-              balances.push({ eth: coinWallet[1].info.balance });
+              balances.push({ ETH: coinWallet[1].info.balance });
             } else if (coinWallet[0] === "Tron") {
-              balances.push({ tron: coinWallet[1].info.balance / 1000000 });
+              balances.push({ TRON: coinWallet[1].info.balance / 1000000 });
             }
           }
           console.log(balances);
@@ -294,6 +294,8 @@ function Wallet() {
                       balance = coinWallet[1].info.balance;
                     } else if (coinWallet[0] === "Tron") {
                       balance = coinWallet[1].info.balance / 1000000;
+                    } else if (coinWallet[0] === "naira") {
+                      balance = coinWallet[1].balance;
                     }
                     return (
                       <CoinRow
@@ -657,7 +659,7 @@ const WalletModal = (props) => {
                           console.log(response);
                           setIsLoading(false);
                           toast({
-                            title: "Withdrawal Successful",
+                            title: "Swap Successful",
                             status: "success",
                           });
                         })

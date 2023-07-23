@@ -9,6 +9,7 @@ import {
   FormLabel,
   HStack,
   Input,
+  Spinner,
   Text,
   VStack,
   useDisclosure,
@@ -28,6 +29,11 @@ import { AiFillPlusSquare } from "react-icons/ai";
 import axios from "axios";
 const Payout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [loading, setLoading] = useState(true);
+  const closeModal = () => {
+    onClose();
+    fetchBankAccounts();
+  };
   const [bankAccount, setBankAccount] = useState(null);
 
   const fetchBankAccounts = async () => {
@@ -39,6 +45,7 @@ const Payout = () => {
       })
       .then((response) => {
         setBankAccount(response.data);
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -59,7 +66,9 @@ const Payout = () => {
             <Text fontSize={"md"} color={"gray.700"}>
               Add Payment Method
             </Text>
-            {bankAccount ? (
+            {loading ? (
+              <Spinner />
+            ) : bankAccount ? (
               <VStack
                 width="full"
                 gap={"10px"}
@@ -91,6 +100,7 @@ const Payout = () => {
                 You don't have a payment method. Please set one
               </Text>
             )}
+            {}
 
             <HStack
               width={"full"}
@@ -120,7 +130,7 @@ const Payout = () => {
             </HStack>
           </VStack>
         </Container>
-        <PayoutModal isOpen={isOpen} onClose={onClose} />
+        <PayoutModal isOpen={isOpen} onClose={closeModal} />
       </VStack>
     </SettingsLayout>
   );
@@ -151,13 +161,7 @@ const PayoutModal = (props) => {
       .catch(function (error) {
         if (error.response?.status === 400) {
           if (error.response?.data?.email) {
-            toast({ title: "User with email already exist", status: "error" });
-          }
-          if (error.response?.data?.username) {
-            toast({
-              title: "User with username already exist",
-              status: "error",
-            });
+            toast({ title: "An error occured", status: "error" });
           }
         }
 
@@ -223,10 +227,16 @@ const PayoutModal = (props) => {
                   width={"full"}
                   size={"lg"}
                   _hover={{ bg: "gray.600" }}
+                  onClick={props.onClose}
                 >
                   Cancel
                 </Button>
-                <Button width={"full"} size={"lg"} type="submit">
+                <Button
+                  isLoading={isloading}
+                  width={"full"}
+                  size={"lg"}
+                  type="submit"
+                >
                   Confirm
                 </Button>
               </HStack>
