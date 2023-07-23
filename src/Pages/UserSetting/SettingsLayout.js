@@ -41,7 +41,7 @@ function SettingsLayout(props) {
             </Link>
           </Box>
           <Box sx={navStyle}>
-            <Link to="">
+            <Link to="payout">
               <Text>Payout</Text>
             </Link>
           </Box>

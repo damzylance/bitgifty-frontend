@@ -5,7 +5,6 @@ import {
   Input,
   Text,
   VStack,
-  ButtonGroup,
   Drawer,
   DrawerBody,
   DrawerHeader,
@@ -42,6 +41,7 @@ const chartOptions = {
 
 function Wallet() {
   const [rates, setRates] = useState([]);
+  const balances = [];
   // const [walletBalances, setWalletBalances] = useState([]);
   // let urls = [
   //   `https://api.tatum.io/v3/tatum/rate/BTC`,
@@ -128,10 +128,25 @@ function Wallet() {
 
         if (response.data) {
           setIsLoading(false);
-
           setWallets(entries);
 
-          localStorage.setItem("wallets", JSON.stringify(entries));
+          for (let index = 0; index < entries.length; index++) {
+            const coinWallet = entries[index];
+            if (coinWallet[0] === "Bitcoin") {
+              balances.push({
+                btc: coinWallet[1].info.incoming - coinWallet[1].info.outgoing,
+              });
+            } else if (coinWallet[0] === "Bnb") {
+              balances.push({ bnb: 0 });
+            } else if (coinWallet[0] === "Celo") {
+              balances.push({ celo: coinWallet[1].info.celo });
+            } else if (coinWallet[0] === "Ethereum") {
+              balances.push({ eth: coinWallet[1].info.balance });
+            } else if (coinWallet[0] === "Tron") {
+              balances.push({ tron: coinWallet[1].info.balance / 1000000 });
+            }
+          }
+          console.log(balances);
         }
       })
       .catch(function (error) {
@@ -270,6 +285,7 @@ function Wallet() {
                       balance =
                         coinWallet[1].info.incoming -
                         coinWallet[1].info.outgoing;
+                      balances.push({ bitcoin: balance });
                     } else if (coinWallet[0] === "Bnb") {
                       balance = 0;
                     } else if (coinWallet[0] === "Celo") {
@@ -345,6 +361,15 @@ function CoinRow(props) {
           variant={"outline"}
         >
           Deposit
+        </Button>
+        <Button
+          onClick={() => {
+            setPage("swap");
+            onOpen();
+          }}
+          variant={"outline"}
+        >
+          Swap
         </Button>
         <Button
           onClick={() => {
@@ -570,6 +595,185 @@ const WalletModal = (props) => {
                       placeholder="Receiver address"
                       {...register("receiver_address")}
                       required
+                    />
+
+                    <Button width={"full"} isLoading={isLoading} type="Submit">
+                      {" "}
+                      Send
+                    </Button>
+                  </VStack>
+                </form>
+                {/* <Input
+                  required
+                  value={withdrawAmount}
+                  onChange={(e) => {
+                    let amount = e.target.value.split("");
+
+                    for (let index = 0; index < amount.length; index++) {
+                      const element = amount[index];
+                      if (isNaN(element)) {
+                        amount.pop(element);
+                      }
+                    }
+                    console.log(amount);
+                    let joinedAmount = amount.join("");
+                    if (!isNaN(joinedAmount)) {
+                      setWithdrawAmount(parseFloat(joinedAmount));
+                    } else setWithdrawAmount(0);
+
+                    console.log(withdrawAmount);
+                  }}
+                /> */}
+              </Box>
+            </DrawerBody>
+          </>
+        )}
+        {props.page === "swap" && (
+          <>
+            <DrawerHeader color={"brand.700"} textAlign={"center"}>
+              Swap {props.network} to NGN
+            </DrawerHeader>
+            <DrawerBody>
+              <Box width={"full"} textAlign={"center"} mt={"100px"}>
+                <form
+                  onSubmit={handleSubmit(async (data) => {
+                    data.swap_amount = floatAmount;
+                    data.swap_to = "naira";
+                    data.swap_from = props.network;
+                    if (errors.length > 0) {
+                      console.log("error");
+                    } else {
+                      setIsLoading(true);
+                      console.log(data);
+                      await axios
+                        .post(`${process.env.REACT_APP_BASE_URL}swap/`, data, {
+                          headers: {
+                            Authorization: `Token ${localStorage.getItem(
+                              "token"
+                            )}`,
+                          },
+                        })
+                        .then(function (response) {
+                          console.log(response);
+                          setIsLoading(false);
+                          toast({
+                            title: "Withdrawal Successful",
+                            status: "success",
+                          });
+                        })
+                        .catch(function (error) {
+                          setIsLoading(false);
+                          toast({
+                            title: "An error occured",
+                            status: "warning",
+                          });
+                          console.log(error);
+                        });
+                    }
+                  })}
+                  style={{ width: "100%" }}
+                >
+                  <VStack gap={"20px"}>
+                    {/* <Input
+                      name="amount"
+                      type={"text"}
+                      placeholder="Amount"
+                      {...register("amount", {
+                        onChange: (e) => {
+                          console.log(e.target.value.toLocaleString("en-US"));
+                        },
+                      })}
+                      required
+                    /> */}
+                    <Box width={"full"}>
+                      <NumericFormat
+                        value={withdrawAmount}
+                        placeholder="Amount"
+                        required
+                        allowLeadingZeros
+                        thousandSeparator=","
+                        style={{
+                          width: "100%",
+                          outline: "2px solid transparent",
+                          border: "1px solid #e2e8f0",
+                          padding: "6px 14px",
+                          borderRadius: "5px",
+                        }}
+                        onChange={(e) => {
+                          let amount = e.target.value;
+                          let toFloatAmount;
+                          toFloatAmount = parseFloat(
+                            amount.replaceAll(",", "")
+                          ).toFixed(7);
+                          if (props.network === "Bitcoin") {
+                            let btcErrors = [];
+
+                            console.log("error", toFloatAmount);
+                            if (toFloatAmount < 0.0005) {
+                              alert();
+                              btcErrors.push("Minimum withdrawal is 0.0005 ");
+                              setErrors(btcErrors);
+                            } else {
+                              setErrors([]);
+                              setFloatAmount(toFloatAmount.toString());
+                            }
+                          } else if (props.network === "Celo") {
+                            let coinErrors = [];
+                            if (toFloatAmount < 2) {
+                              coinErrors.push("Minimum withdrawal is 2");
+                              setErrors(coinErrors);
+                              console.log(coinErrors);
+                            } else {
+                              setErrors([]);
+                              setFloatAmount(toFloatAmount.toString());
+                            }
+                          } else if (props.network === "Tron") {
+                            let coinErrors = [];
+                            if (toFloatAmount < 2) {
+                              coinErrors.push("Minimum withdrawal is 2  ");
+                              setErrors(coinErrors);
+                              console.log(coinErrors);
+                            } else {
+                              setErrors([]);
+                              setFloatAmount(toFloatAmount.toString());
+                            }
+                          } else if (props.network === "Bnb") {
+                            let coinErrors = [];
+                            if (toFloatAmount < 0.002) {
+                              coinErrors.push("Minimum withdrawal is 0.002  ");
+                              setErrors(coinErrors);
+                              console.log(coinErrors);
+                            } else {
+                              setErrors([]);
+                              setFloatAmount(toFloatAmount);
+                            }
+                          } else if (props.network === "Ethereum") {
+                            let coinErrors = [];
+                            if (toFloatAmount < 0.001) {
+                              coinErrors.push("Minimum withdrawal is 0.001  ");
+                              setErrors(coinErrors);
+                              console.log(coinErrors);
+                            } else {
+                              setErrors([]);
+                              setFloatAmount(toFloatAmount.toString());
+                            }
+                          }
+                        }}
+                      />
+                      <Box textAlign={"left"}>
+                        {errors.length > 0 && (
+                          <Text my={"2"} color={"red"} fontSize={"xs"}>
+                            {errors[0]}
+                          </Text>
+                        )}
+                      </Box>
+                    </Box>
+
+                    <Input
+                      name="receiver_address"
+                      placeholder="You will recieve"
+                      required
+                      disabled
                     />
 
                     <Button width={"full"} isLoading={isLoading} type="Submit">
