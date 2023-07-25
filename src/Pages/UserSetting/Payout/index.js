@@ -30,21 +30,22 @@ import axios from "axios";
 const Payout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(true);
+  const [bankAccounts, setBankAccounts] = useState([]);
   const closeModal = () => {
     onClose();
     fetchBankAccounts();
   };
-  const [bankAccount, setBankAccount] = useState(null);
 
   const fetchBankAccounts = async () => {
     await axios
-      .get(`${process.env.REACT_APP_BASE_URL}wallets/naira/`, {
+      .get(`${process.env.REACT_APP_BASE_URL}payouts/`, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
       })
       .then((response) => {
-        setBankAccount(response.data);
+        console.log(response);
+        setBankAccounts(response.data.results);
         setLoading(false);
       })
       .catch((error) => {
@@ -68,33 +69,40 @@ const Payout = () => {
             </Text>
             {loading ? (
               <Spinner />
-            ) : bankAccount ? (
-              <VStack
-                width="full"
-                gap={"10px"}
-                p={"20px"}
-                borderRadius={"lg"}
-                border={"1px solid #90d4e4"}
-                alignItems={"flex-start"}
-              >
-                <Text
-                  pl={"10px"}
-                  lineHeight={"100%"}
-                  color={"gray.600"}
-                  fontWeight={"semibold"}
-                  borderLeft={"2px solid #477FEB "}
-                >
-                  {bankAccount.bank_name}
-                </Text>
-                <HStack
-                  width={"full"}
-                  alignItems={"center"}
-                  justifyContent={"space-between"}
-                >
-                  <Text color={"gray.500"}>{bankAccount.account_name}</Text>
-                  <Text color={"gray.500"}>{bankAccount.account_number}</Text>
-                </HStack>
-              </VStack>
+            ) : bankAccounts.length > 0 ? (
+              bankAccounts.map((bankAccount, index) => {
+                return (
+                  <VStack
+                    width="full"
+                    key={index}
+                    gap={"10px"}
+                    p={"20px"}
+                    borderRadius={"lg"}
+                    border={"1px solid #90d4e4"}
+                    alignItems={"flex-start"}
+                  >
+                    <Text
+                      pl={"10px"}
+                      lineHeight={"100%"}
+                      color={"gray.600"}
+                      fontWeight={"semibold"}
+                      borderLeft={"2px solid #477FEB "}
+                    >
+                      {bankAccount.bank_name}
+                    </Text>
+                    <HStack
+                      width={"full"}
+                      alignItems={"center"}
+                      justifyContent={"space-between"}
+                    >
+                      <Text color={"gray.500"}>{bankAccount.account_name}</Text>
+                      <Text color={"gray.500"}>
+                        {bankAccount.account_number}
+                      </Text>
+                    </HStack>
+                  </VStack>
+                );
+              })
             ) : (
               <Text fontSize={"md"} color={"gray.700"}>
                 You don't have a payment method. Please set one
@@ -123,6 +131,7 @@ const Payout = () => {
               <AiFillPlusSquare
                 color={"#103D96"}
                 fontSize={"24px"}
+                cursor={"pointer"}
                 onClick={() => {
                   onOpen();
                 }}
@@ -145,7 +154,7 @@ const PayoutModal = (props) => {
     console.log(data);
     setIsLoading(true);
     await axios
-      .put(`${process.env.REACT_APP_BASE_URL}wallets/naira/`, data, {
+      .post(`${process.env.REACT_APP_BASE_URL}payouts/`, data, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
@@ -157,6 +166,7 @@ const PayoutModal = (props) => {
           title: "Bank added successfully",
           status: "success",
         });
+        props.onClose();
       })
       .catch(function (error) {
         if (error.response?.status === 400) {

@@ -17,6 +17,7 @@ import {
   Spinner,
   HStack,
   Image,
+  Select,
 } from "@chakra-ui/react";
 import { NumericFormat } from "react-number-format";
 
@@ -24,10 +25,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../Components/DashboardLayout";
 import Authenticate from "../../../Helpers/Auth";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { MdSwapVert } from "react-icons/md";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -114,21 +116,25 @@ function Wallet() {
   };
   const [wallets, setWallets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [fiatWallets, setFiatWallets] = useState([]);
 
-  useEffect(() => {
-    axios
+  const fetchWallets = async () => {
+    await axios
       .get(`${process.env.REACT_APP_BASE_URL}wallets/`, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
       })
       .then(function (response) {
-        console.log(response.data);
         const entries = Object.entries(response.data);
-
         if (response.data) {
           setIsLoading(false);
           setWallets(entries);
+          setFiatWallets(
+            entries.filter((element) => {
+              return element[1].type === "fiat";
+            })
+          );
 
           for (let index = 0; index < entries.length; index++) {
             const coinWallet = entries[index];
@@ -146,13 +152,12 @@ function Wallet() {
               balances.push({ TRON: coinWallet[1].info.balance / 1000000 });
             }
           }
-          console.log(balances);
         }
       })
-      .catch(function (error) {
-        console.log(error);
-      });
-
+      .catch(function (error) {});
+  };
+  useEffect(() => {
+    fetchWallets();
     // fetchRates();
   }, []);
   console.table(rates);
@@ -234,7 +239,7 @@ function Wallet() {
               <Text>Balance</Text>
               <Text>Action</Text>
             </Flex>
-            {/* <VStack
+            <VStack
               width={"full"}
               alignContent="flex-start"
               gap={"2"}
@@ -252,10 +257,38 @@ function Wallet() {
                 Fiat
               </Text>
               <VStack width={"full"} gap={"2"} alignContent="flex-start">
+                {isLoading ? (
+                  <Spinner />
+                ) : (
+                  wallets
+                    .filter((wallet) => {
+                      return wallet[1].type === "fiat";
+                    })
+                    .map((wallet, index) => {
+                      // const { address, network } = wallet;
+                      const coinWallet = wallet;
+                      const balance = coinWallet[1].balance;
+
+                      return (
+                        <CoinRow
+                          key={index}
+                          currency={coinWallet[0].toUpperCase()}
+                          address={coinWallet[1].address}
+                          amount={isNaN(balance) ? 0 : balance}
+                          network={coinWallet[0]}
+                          qr={coinWallet[1].qrcode}
+                          refresh={() => {
+                            fetchWallets();
+                          }}
+                          type={coinWallet[1].type}
+                        />
+                      );
+                    })
+                )}
                 <CoinRow currency={"NGN"} amount={5000} />
                 <CoinRow currency={"GHC"} amount={5000} />
               </VStack>
-            </VStack> */}
+            </VStack>
             <VStack
               width={"full"}
               alignContent="flex-start"
@@ -277,37 +310,45 @@ function Wallet() {
                 {isLoading ? (
                   <Spinner />
                 ) : (
-                  wallets.map((wallet, index) => {
-                    // const { address, network } = wallet;
-                    const coinWallet = wallet;
-                    let balance;
-                    if (coinWallet[0] === "Bitcoin") {
-                      balance =
-                        coinWallet[1].info.incoming -
-                        coinWallet[1].info.outgoing;
-                      balances.push({ bitcoin: balance });
-                    } else if (coinWallet[0] === "Bnb") {
-                      balance = 0;
-                    } else if (coinWallet[0] === "Celo") {
-                      balance = coinWallet[1].info.celo;
-                    } else if (coinWallet[0] === "Ethereum") {
-                      balance = coinWallet[1].info.balance;
-                    } else if (coinWallet[0] === "Tron") {
-                      balance = coinWallet[1].info.balance / 1000000;
-                    } else if (coinWallet[0] === "naira") {
-                      balance = coinWallet[1].balance;
-                    }
-                    return (
-                      <CoinRow
-                        key={index}
-                        currency={coinWallet[0].toUpperCase()}
-                        address={coinWallet[1].address}
-                        amount={isNaN(balance) ? 0 : balance}
-                        network={coinWallet[0]}
-                        qr={coinWallet[1].qrcode}
-                      />
-                    );
-                  })
+                  wallets
+                    .filter((wallet) => {
+                      return wallet[1].type !== "fiat";
+                    })
+                    .map((wallet, index) => {
+                      // const { address, network } = wallet;
+                      const coinWallet = wallet;
+                      let balance;
+                      if (coinWallet[0] === "Bitcoin") {
+                        balance =
+                          coinWallet[1].info.incoming -
+                          coinWallet[1].info.outgoing;
+                        balances.push({ bitcoin: balance });
+                      } else if (coinWallet[0] === "Bnb") {
+                        balance = 0;
+                      } else if (coinWallet[0] === "Celo") {
+                        balance = coinWallet[1].info.celo;
+                      } else if (coinWallet[0] === "Ethereum") {
+                        balance = coinWallet[1].info.balance;
+                      } else if (coinWallet[0] === "Tron") {
+                        balance = coinWallet[1].info.balance / 1000000;
+                      } else if (coinWallet[0] === "naira") {
+                        balance = coinWallet[1].balance;
+                      }
+                      return (
+                        <CoinRow
+                          key={index}
+                          currency={coinWallet[0].toUpperCase()}
+                          address={coinWallet[1].address}
+                          amount={isNaN(balance) ? 0 : balance}
+                          network={coinWallet[0]}
+                          qr={coinWallet[1].qrcode}
+                          refresh={() => {
+                            fetchWallets();
+                          }}
+                          type={"crypto"}
+                        />
+                      );
+                    })
                 )}
               </VStack>
             </VStack>
@@ -325,6 +366,7 @@ function CoinRow(props) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [page, setPage] = useState("deposit");
+
   return (
     <Flex
       width={"full"}
@@ -357,8 +399,10 @@ function CoinRow(props) {
         </Button>
         <Button
           onClick={() => {
-            setPage("deposit");
-            onOpen();
+            if (props.type !== "fiat") {
+              setPage("deposit");
+              onOpen();
+            }
           }}
           variant={"outline"}
         >
@@ -366,8 +410,10 @@ function CoinRow(props) {
         </Button>
         <Button
           onClick={() => {
-            setPage("swap");
-            onOpen();
+            if (props.type !== "fiat") {
+              setPage("swap");
+              onOpen();
+            }
           }}
           variant={"outline"}
         >
@@ -389,6 +435,9 @@ function CoinRow(props) {
         address={props.address}
         network={props.network}
         qr={props.qr}
+        refresh={props.refresh}
+        balance={props.amount}
+        type={props.type}
       />
     </Flex>
   );
@@ -401,6 +450,38 @@ const WalletModal = (props) => {
   const [errors, setErrors] = useState([]);
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [accountsLoading, setAccountsLoading] = useState(false);
+
+  const fetchBankAccounts = async () => {
+    setAccountsLoading(true);
+    await axios
+      .get(`${process.env.REACT_APP_BASE_URL}payouts/`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((response) => {
+        setBankAccounts(
+          response.data.results.map((bank) => {
+            return {
+              ...bank,
+              label: `${bank.bank_name} -  ${bank.account_number} - ${bank.account_name}`,
+            };
+          })
+        );
+        setAccountsLoading(false);
+      })
+      .catch((error) => {
+        setAccountsLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    if (props.type === "fiat") {
+      fetchBankAccounts();
+    }
+  }, []);
 
   return (
     <Drawer
@@ -452,53 +533,176 @@ const WalletModal = (props) => {
         {props.page === "withdraw" && (
           <>
             <DrawerHeader color={"brand.700"} textAlign={"center"}>
-              Withdraw {props.network}
+              Withdraw{" "}
+              <span style={{ textTransform: "capitalize" }}>
+                {props.network}
+              </span>
             </DrawerHeader>
             <DrawerBody>
               <Box width={"full"} textAlign={"center"} mt={"100px"}>
-                <form
-                  onSubmit={handleSubmit(async (data) => {
-                    data.amount = floatAmount;
-                    data.network = props.network;
-                    if (errors.length > 0) {
-                      console.log("error");
-                    } else {
-                      setIsLoading(true);
-                      console.log(data);
-                      await axios
-                        .post(
-                          `${process.env.REACT_APP_BASE_URL}withdraw/`,
-                          data,
-                          {
-                            headers: {
-                              Authorization: `Token ${localStorage.getItem(
-                                "token"
-                              )}`,
-                            },
-                          }
-                        )
-                        .then(function (response) {
-                          console.log(response);
-                          setIsLoading(false);
-                          toast({
-                            title: "Withdrawal Successful",
-                            status: "success",
+                {props.type === "fiat" ? (
+                  <form
+                    onSubmit={handleSubmit(async (data) => {
+                      data.amount = floatAmount;
+                      data.network = props.network;
+                      if (errors.length > 0) {
+                      } else {
+                        setIsLoading(true);
+                        await axios
+                          .post(
+                            `${process.env.REACT_APP_BASE_URL}withdraw/`,
+                            data,
+                            {
+                              headers: {
+                                Authorization: `Token ${localStorage.getItem(
+                                  "token"
+                                )}`,
+                              },
+                            }
+                          )
+                          .then(function (response) {
+                            setIsLoading(false);
+                            toast({
+                              title: "Withdrawal Successful",
+                              status: "success",
+                            });
+                          })
+                          .catch(function (error) {
+                            setIsLoading(false);
+                            toast({
+                              title: "An error occured",
+                              status: "warning",
+                            });
                           });
-                        })
-                        .catch(function (error) {
-                          setIsLoading(false);
-                          toast({
-                            title: "An error occured",
-                            status: "warning",
+                      }
+                    })}
+                    style={{ width: "100%" }}
+                  >
+                    <VStack gap={"20px"}>
+                      <VStack gap={"20px"} width={"full"}>
+                        <VStack width={"full"} alignItems={"flex-start"}>
+                          <Text
+                            fontSize={"xs"}
+                            fontWeight={"semibold"}
+                            color={"gray.600"}
+                          >
+                            NGN Amount
+                          </Text>
+                          <NumericFormat
+                            placeholder="Amount"
+                            required
+                            allowLeadingZeros
+                            thousandSeparator=","
+                            style={{
+                              width: "100%",
+                              outline: "2px solid transparent",
+                              border: "1px solid #e2e8f0",
+                              padding: "6px 14px",
+                              borderRadius: "5px",
+                            }}
+                            onChange={(e) => {
+                              let amount = e.target.value;
+                              let toFloatAmount;
+                              toFloatAmount = parseFloat(
+                                amount.replaceAll(",", "")
+                              ).toFixed(7);
+                              if (props.network === "naira") {
+                                let coinErrors = [];
+                                if (toFloatAmount < 5) {
+                                  coinErrors.push("Minimum withdrawal is 5  ");
+                                  setErrors(coinErrors);
+                                } else {
+                                  setErrors([]);
+                                  setFloatAmount(toFloatAmount.toString());
+                                }
+                              }
+                            }}
+                          />
+                        </VStack>
+
+                        <VStack width={"full"} alignItems={"flex-start"}>
+                          <Text
+                            fontSize={"xs"}
+                            fontWeight={"semibold"}
+                            color={"gray.600"}
+                          >
+                            Select Bank Account
+                          </Text>
+                          <Box width={"full"} textAlign={"left"}>
+                            <Select bg={"#fff"} borderRadius={"md"}>
+                              {bankAccounts.map((bankAccount, id) => {
+                                return (
+                                  <option key={id} value={`${bankAccount.id}`}>
+                                    {bankAccount.label}
+                                  </option>
+                                );
+                              })}
+                            </Select>
+                          </Box>
+
+                          <Box textAlign={"left"}>
+                            {errors.length > 0 && (
+                              <Text my={"2"} color={"red"} fontSize={"xs"}>
+                                {errors[0]}
+                              </Text>
+                            )}
+                          </Box>
+                        </VStack>
+                      </VStack>
+
+                      <Button
+                        width={"full"}
+                        isLoading={isLoading}
+                        type="Submit"
+                      >
+                        {" "}
+                        Withdraw
+                      </Button>
+                    </VStack>
+                  </form>
+                ) : (
+                  ""
+                )}
+                {props.type === "crypto" ? (
+                  <form
+                    onSubmit={handleSubmit(async (data) => {
+                      data.amount = floatAmount;
+                      data.network = props.network;
+                      if (errors.length > 0) {
+                      } else {
+                        setIsLoading(true);
+                        await axios
+                          .post(
+                            `${process.env.REACT_APP_BASE_URL}withdraw/`,
+                            data,
+                            {
+                              headers: {
+                                Authorization: `Token ${localStorage.getItem(
+                                  "token"
+                                )}`,
+                              },
+                            }
+                          )
+                          .then(function (response) {
+                            setIsLoading(false);
+                            toast({
+                              title: "Withdrawal Successful",
+                              status: "success",
+                            });
+                          })
+                          .catch(function (error) {
+                            setIsLoading(false);
+                            toast({
+                              title: "An error occured",
+                              status: "warning",
+                            });
                           });
-                          console.log(error);
-                        });
-                    }
-                  })}
-                  style={{ width: "100%" }}
-                >
-                  <VStack gap={"20px"}>
-                    {/* <Input
+                      }
+                    })}
+                    style={{ width: "100%" }}
+                  >
+                    <VStack gap={"20px"}>
+                      {/* <Input
                       name="amount"
                       type={"text"}
                       placeholder="Amount"
@@ -509,102 +713,118 @@ const WalletModal = (props) => {
                       })}
                       required
                     /> */}
-                    <Box width={"full"}>
-                      <NumericFormat
-                        value={withdrawAmount}
-                        placeholder="Amount"
-                        required
-                        allowLeadingZeros
-                        thousandSeparator=","
-                        style={{
-                          width: "100%",
-                          outline: "2px solid transparent",
-                          border: "1px solid #e2e8f0",
-                          padding: "6px 14px",
-                          borderRadius: "5px",
-                        }}
-                        onChange={(e) => {
-                          let amount = e.target.value;
-                          let toFloatAmount;
-                          toFloatAmount = parseFloat(
-                            amount.replaceAll(",", "")
-                          ).toFixed(7);
-                          if (props.network === "Bitcoin") {
-                            let btcErrors = [];
+                      <Box width={"full"}>
+                        <NumericFormat
+                          value={withdrawAmount}
+                          placeholder="Amount"
+                          required
+                          allowLeadingZeros
+                          thousandSeparator=","
+                          style={{
+                            width: "100%",
+                            outline: "2px solid transparent",
+                            border: "1px solid #e2e8f0",
+                            padding: "6px 14px",
+                            borderRadius: "5px",
+                          }}
+                          onChange={(e) => {
+                            let amount = e.target.value;
+                            let toFloatAmount;
+                            toFloatAmount = parseFloat(
+                              amount.replaceAll(",", "")
+                            ).toFixed(7);
+                            if (props.network === "Bitcoin") {
+                              let btcErrors = [];
 
-                            console.log("error", toFloatAmount);
-                            if (toFloatAmount < 0.0005) {
-                              alert();
-                              btcErrors.push("Minimum withdrawal is 0.0005 ");
-                              setErrors(btcErrors);
-                            } else {
-                              setErrors([]);
-                              setFloatAmount(toFloatAmount.toString());
+                              if (toFloatAmount < 0.0005) {
+                                alert();
+                                btcErrors.push("Minimum withdrawal is 0.0005 ");
+                                setErrors(btcErrors);
+                              } else {
+                                setErrors([]);
+                                setFloatAmount(toFloatAmount.toString());
+                              }
+                            } else if (props.network === "Celo") {
+                              let coinErrors = [];
+                              if (toFloatAmount < 2) {
+                                coinErrors.push("Minimum withdrawal is 2");
+                                setErrors(coinErrors);
+                              } else {
+                                setErrors([]);
+                                setFloatAmount(toFloatAmount.toString());
+                              }
+                            } else if (props.network === "Tron") {
+                              let coinErrors = [];
+                              if (toFloatAmount < 2) {
+                                coinErrors.push("Minimum withdrawal is 2  ");
+                                setErrors(coinErrors);
+                              } else {
+                                setErrors([]);
+                                setFloatAmount(toFloatAmount.toString());
+                              }
+                            } else if (props.network === "Bnb") {
+                              let coinErrors = [];
+                              if (toFloatAmount < 0.002) {
+                                coinErrors.push(
+                                  "Minimum withdrawal is 0.002  "
+                                );
+                                setErrors(coinErrors);
+                              } else {
+                                setErrors([]);
+                                setFloatAmount(toFloatAmount);
+                              }
+                            } else if (props.network === "Ethereum") {
+                              let coinErrors = [];
+                              if (toFloatAmount < 0.001) {
+                                coinErrors.push(
+                                  "Minimum withdrawal is 0.001  "
+                                );
+                                setErrors(coinErrors);
+                              } else {
+                                setErrors([]);
+                                setFloatAmount(toFloatAmount.toString());
+                              }
+                            } else if (props.network === "naira") {
+                              let coinErrors = [];
+                              if (toFloatAmount < 5) {
+                                coinErrors.push("Minimum withdrawal is 5  ");
+                                setErrors(coinErrors);
+                              } else {
+                                setErrors([]);
+                                setFloatAmount(toFloatAmount.toString());
+                              }
                             }
-                          } else if (props.network === "Celo") {
-                            let coinErrors = [];
-                            if (toFloatAmount < 2) {
-                              coinErrors.push("Minimum withdrawal is 2");
-                              setErrors(coinErrors);
-                              console.log(coinErrors);
-                            } else {
-                              setErrors([]);
-                              setFloatAmount(toFloatAmount.toString());
-                            }
-                          } else if (props.network === "Tron") {
-                            let coinErrors = [];
-                            if (toFloatAmount < 2) {
-                              coinErrors.push("Minimum withdrawal is 2  ");
-                              setErrors(coinErrors);
-                              console.log(coinErrors);
-                            } else {
-                              setErrors([]);
-                              setFloatAmount(toFloatAmount.toString());
-                            }
-                          } else if (props.network === "Bnb") {
-                            let coinErrors = [];
-                            if (toFloatAmount < 0.002) {
-                              coinErrors.push("Minimum withdrawal is 0.002  ");
-                              setErrors(coinErrors);
-                              console.log(coinErrors);
-                            } else {
-                              setErrors([]);
-                              setFloatAmount(toFloatAmount);
-                            }
-                          } else if (props.network === "Ethereum") {
-                            let coinErrors = [];
-                            if (toFloatAmount < 0.001) {
-                              coinErrors.push("Minimum withdrawal is 0.001  ");
-                              setErrors(coinErrors);
-                              console.log(coinErrors);
-                            } else {
-                              setErrors([]);
-                              setFloatAmount(toFloatAmount.toString());
-                            }
-                          }
-                        }}
-                      />
-                      <Box textAlign={"left"}>
-                        {errors.length > 0 && (
-                          <Text my={"2"} color={"red"} fontSize={"xs"}>
-                            {errors[0]}
-                          </Text>
-                        )}
+                          }}
+                        />
+                        <Box textAlign={"left"}>
+                          {errors.length > 0 && (
+                            <Text my={"2"} color={"red"} fontSize={"xs"}>
+                              {errors[0]}
+                            </Text>
+                          )}
+                        </Box>
                       </Box>
-                    </Box>
-                    <Input
-                      name="receiver_address"
-                      placeholder="Receiver address"
-                      {...register("receiver_address")}
-                      required
-                    />
+                      <Input
+                        name="receiver_address"
+                        placeholder="Receiver address"
+                        {...register("receiver_address")}
+                        required
+                      />
 
-                    <Button width={"full"} isLoading={isLoading} type="Submit">
-                      {" "}
-                      Send
-                    </Button>
-                  </VStack>
-                </form>
+                      <Button
+                        width={"full"}
+                        isLoading={isLoading}
+                        type="Submit"
+                      >
+                        {" "}
+                        Send
+                      </Button>
+                    </VStack>
+                  </form>
+                ) : (
+                  ""
+                )}
+
                 {/* <Input
                   required
                   value={withdrawAmount}
@@ -643,10 +863,8 @@ const WalletModal = (props) => {
                     data.swap_to = "naira";
                     data.swap_from = props.network;
                     if (errors.length > 0) {
-                      console.log("error");
                     } else {
                       setIsLoading(true);
-                      console.log(data);
                       await axios
                         .post(`${process.env.REACT_APP_BASE_URL}swap/`, data, {
                           headers: {
@@ -656,12 +874,12 @@ const WalletModal = (props) => {
                           },
                         })
                         .then(function (response) {
-                          console.log(response);
                           setIsLoading(false);
                           toast({
                             title: "Swap Successful",
                             status: "success",
                           });
+                          props.refresh();
                         })
                         .catch(function (error) {
                           setIsLoading(false);
@@ -669,7 +887,6 @@ const WalletModal = (props) => {
                             title: "An error occured",
                             status: "warning",
                           });
-                          console.log(error);
                         });
                     }
                   })}
@@ -687,100 +904,220 @@ const WalletModal = (props) => {
                       })}
                       required
                     /> */}
-                    <Box width={"full"}>
-                      <NumericFormat
-                        value={withdrawAmount}
-                        placeholder="Amount"
-                        required
-                        allowLeadingZeros
-                        thousandSeparator=","
-                        style={{
-                          width: "100%",
-                          outline: "2px solid transparent",
-                          border: "1px solid #e2e8f0",
-                          padding: "6px 14px",
-                          borderRadius: "5px",
-                        }}
-                        onChange={(e) => {
-                          let amount = e.target.value;
-                          let toFloatAmount;
-                          toFloatAmount = parseFloat(
-                            amount.replaceAll(",", "")
-                          ).toFixed(7);
-                          if (props.network === "Bitcoin") {
-                            let btcErrors = [];
+                    <Box
+                      width={"full"}
+                      background={"#d7eff4"}
+                      pt={"20px"}
+                      px={"10px"}
+                      borderRadius={"lg"}
+                    >
+                      <VStack
+                        width={"full"}
+                        gap={"10px"}
+                        alignItems={"flex-start"}
+                      >
+                        <Text
+                          fontSize={"xs"}
+                          fontWeight={"semibold"}
+                          color={"gray.600"}
+                        >
+                          From
+                        </Text>
+                        <HStack
+                          width={"full"}
+                          gap={"5px"}
+                          borderRadius={"5px"}
+                          padding={"6px 2px"}
+                        >
+                          <Select
+                            bg={"#fff"}
+                            borderRadius={"full"}
+                            width={"120px"}
+                            height={"40px"}
+                            size={"sm"}
+                            border={0}
+                          >
+                            <option value={`${props.network}`}>
+                              {props.network}
+                            </option>
+                          </Select>
+                          <NumericFormat
+                            value={withdrawAmount}
+                            placeholder="0.00"
+                            required
+                            allowLeadingZeros
+                            thousandSeparator=","
+                            style={{
+                              width: "100%",
+                              outline: "0px",
+                              border: "none",
+                              background: "none",
+                              padding: "6px 14px",
+                              borderRadius: "5px",
+                              fontSize: "22px",
+                            }}
+                            onChange={(e) => {
+                              let amount = e.target.value;
+                              let toFloatAmount;
+                              toFloatAmount = parseFloat(
+                                amount.replaceAll(",", "")
+                              ).toFixed(7);
+                              let balanceError = [];
+                              if (toFloatAmount > props.balance) {
+                                balanceError.push("Insufficient balance");
+                                setErrors(balanceError);
+                              } else {
+                                if (props.network === "Bitcoin") {
+                                  let btcErrors = [];
 
-                            console.log("error", toFloatAmount);
-                            if (toFloatAmount < 0.0005) {
-                              alert();
-                              btcErrors.push("Minimum withdrawal is 0.0005 ");
-                              setErrors(btcErrors);
-                            } else {
-                              setErrors([]);
-                              setFloatAmount(toFloatAmount.toString());
-                            }
-                          } else if (props.network === "Celo") {
-                            let coinErrors = [];
-                            if (toFloatAmount < 2) {
-                              coinErrors.push("Minimum withdrawal is 2");
-                              setErrors(coinErrors);
-                              console.log(coinErrors);
-                            } else {
-                              setErrors([]);
-                              setFloatAmount(toFloatAmount.toString());
-                            }
-                          } else if (props.network === "Tron") {
-                            let coinErrors = [];
-                            if (toFloatAmount < 2) {
-                              coinErrors.push("Minimum withdrawal is 2  ");
-                              setErrors(coinErrors);
-                              console.log(coinErrors);
-                            } else {
-                              setErrors([]);
-                              setFloatAmount(toFloatAmount.toString());
-                            }
-                          } else if (props.network === "Bnb") {
-                            let coinErrors = [];
-                            if (toFloatAmount < 0.002) {
-                              coinErrors.push("Minimum withdrawal is 0.002  ");
-                              setErrors(coinErrors);
-                              console.log(coinErrors);
-                            } else {
-                              setErrors([]);
-                              setFloatAmount(toFloatAmount);
-                            }
-                          } else if (props.network === "Ethereum") {
-                            let coinErrors = [];
-                            if (toFloatAmount < 0.001) {
-                              coinErrors.push("Minimum withdrawal is 0.001  ");
-                              setErrors(coinErrors);
-                              console.log(coinErrors);
-                            } else {
-                              setErrors([]);
-                              setFloatAmount(toFloatAmount.toString());
-                            }
-                          }
-                        }}
-                      />
-                      <Box textAlign={"left"}>
-                        {errors.length > 0 && (
-                          <Text my={"2"} color={"red"} fontSize={"xs"}>
-                            {errors[0]}
-                          </Text>
-                        )}
-                      </Box>
+                                  console.log("error", toFloatAmount);
+                                  if (toFloatAmount < 0.0005) {
+                                    alert();
+                                    btcErrors.push("Minimum amount is 0.0005 ");
+                                    setErrors(btcErrors);
+                                  } else {
+                                    setErrors([]);
+                                    setFloatAmount(toFloatAmount.toString());
+                                  }
+                                } else if (props.network === "Celo") {
+                                  let coinErrors = [];
+                                  if (toFloatAmount < 2) {
+                                    coinErrors.push("Minimum amount is 2");
+                                    setErrors(coinErrors);
+                                    console.log(coinErrors);
+                                  } else {
+                                    setErrors([]);
+                                    setFloatAmount(toFloatAmount.toString());
+                                  }
+                                } else if (props.network === "Tron") {
+                                  let coinErrors = [];
+
+                                  if (toFloatAmount < 2) {
+                                    coinErrors.push("Minimum amount is 2  ");
+                                    setErrors(coinErrors);
+                                    console.log(coinErrors);
+                                  } else {
+                                    setErrors([]);
+                                    setFloatAmount(toFloatAmount.toString());
+                                  }
+                                } else if (props.network === "Bnb") {
+                                  let coinErrors = [];
+                                  if (toFloatAmount < 0.002) {
+                                    coinErrors.push(
+                                      "Minimum withdrawal is 0.002  "
+                                    );
+                                    setErrors(coinErrors);
+                                    console.log(coinErrors);
+                                  } else {
+                                    setErrors([]);
+                                    setFloatAmount(toFloatAmount);
+                                  }
+                                } else if (props.network === "Ethereum") {
+                                  let coinErrors = [];
+                                  if (toFloatAmount < 0.001) {
+                                    coinErrors.push(
+                                      "Minimum withdrawal is 0.001  "
+                                    );
+                                    setErrors(coinErrors);
+                                    console.log(coinErrors);
+                                  } else {
+                                    setErrors([]);
+                                    setFloatAmount(toFloatAmount.toString());
+                                  }
+                                }
+                              }
+                            }}
+                          />
+                        </HStack>
+
+                        <Box textAlign={"left"}>
+                          {errors.length > 0 && (
+                            <Text my={"2"} color={"red"} fontSize={"xs"}>
+                              {errors[0]}
+                            </Text>
+                          )}
+                        </Box>
+                      </VStack>
                     </Box>
+                    <Box
+                      padding={"10px"}
+                      bg={"#eff6f7"}
+                      cursor={"pointer"}
+                      borderRadius={"full"}
+                    >
+                      <MdSwapVert fontSize={"28px"} />
+                    </Box>
+                    <Box
+                      width={"full"}
+                      background={"#d7eff4"}
+                      pt={"20px"}
+                      px={"10px"}
+                      borderRadius={"lg"}
+                    >
+                      <VStack
+                        width={"full"}
+                        gap={"10px"}
+                        alignItems={"flex-start"}
+                      >
+                        <Text
+                          fontSize={"xs"}
+                          fontWeight={"semibold"}
+                          color={"gray.600"}
+                        >
+                          To
+                        </Text>
+                        <HStack
+                          width={"full"}
+                          gap={"5px"}
+                          borderRadius={"5px"}
+                          padding={"6px 2px"}
+                        >
+                          <Select
+                            bg={"#fff"}
+                            borderRadius={"full"}
+                            width={"120px"}
+                            height={"40px"}
+                            size={"sm"}
+                            border={0}
+                          >
+                            <option value={`naira`}>NGN</option>
+                          </Select>
+                          <NumericFormat
+                            value={floatAmount * 450}
+                            placeholder="0.00"
+                            required
+                            allowLeadingZeros
+                            thousandSeparator=","
+                            disabled
+                            style={{
+                              width: "100%",
+                              outline: "0px",
+                              border: "none",
+                              background: "none",
+                              padding: "6px 14px",
+                              borderRadius: "5px",
+                              fontSize: "22px",
+                              cursor: "not-allowed",
+                            }}
+                          />
+                        </HStack>
 
-                    <Input
-                      name="receiver_address"
-                      placeholder="You will recieve"
-                      required
-                      disabled
-                    />
-
-                    <Button width={"full"} isLoading={isLoading} type="Submit">
-                      {" "}
-                      Send
+                        <Box textAlign={"left"}>
+                          {errors.length > 0 && (
+                            <Text my={"2"} color={"red"} fontSize={"xs"}></Text>
+                          )}
+                        </Box>
+                      </VStack>
+                    </Box>
+                    <Box width={"full"} height={"40px"}></Box>
+                    <Button
+                      width={"full"}
+                      mt={"10px"}
+                      size={"lg"}
+                      isLoading={isLoading}
+                      type="Submit"
+                    >
+                      Swap
                     </Button>
                   </VStack>
                 </form>
