@@ -285,8 +285,6 @@ function Wallet() {
                       );
                     })
                 )}
-                <CoinRow currency={"NGN"} amount={5000} />
-                <CoinRow currency={"GHC"} amount={5000} />
               </VStack>
             </VStack>
             <VStack
@@ -545,6 +543,7 @@ const WalletModal = (props) => {
                     onSubmit={handleSubmit(async (data) => {
                       data.amount = floatAmount;
                       data.network = props.network;
+                      console.log(data);
                       if (errors.length > 0) {
                       } else {
                         setIsLoading(true);
@@ -568,6 +567,7 @@ const WalletModal = (props) => {
                             });
                           })
                           .catch(function (error) {
+                            console.log(error);
                             setIsLoading(false);
                             toast({
                               title: "An error occured",
@@ -629,10 +629,18 @@ const WalletModal = (props) => {
                             Select Bank Account
                           </Text>
                           <Box width={"full"} textAlign={"left"}>
-                            <Select bg={"#fff"} borderRadius={"md"}>
+                            <Select
+                              bg={"#fff"}
+                              borderRadius={"md"}
+                              name="account_number"
+                              {...register("account_number")}
+                            >
                               {bankAccounts.map((bankAccount, id) => {
                                 return (
-                                  <option key={id} value={`${bankAccount.id}`}>
+                                  <option
+                                    key={id}
+                                    value={`${bankAccount.account_number}`}
+                                  >
                                     {bankAccount.label}
                                   </option>
                                 );
