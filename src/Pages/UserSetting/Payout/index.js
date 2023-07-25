@@ -118,6 +118,10 @@ const Payout = () => {
               alignItems={"center"}
               padding={"20px"}
               borderRadius={"xl"}
+              cursor={"pointer"}
+              onClick={() => {
+                onOpen();
+              }}
             >
               <Text
                 pl={"10px"}
@@ -126,15 +130,12 @@ const Payout = () => {
                 fontWeight={"semibold"}
                 borderLeft={"2px solid #477FEB "}
               >
-                Bank Transfer
+                Add Bank
               </Text>
               <AiFillPlusSquare
                 color={"#103D96"}
                 fontSize={"24px"}
                 cursor={"pointer"}
-                onClick={() => {
-                  onOpen();
-                }}
               />
             </HStack>
           </VStack>

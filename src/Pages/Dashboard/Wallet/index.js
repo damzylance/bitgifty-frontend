@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { MdSwapVert } from "react-icons/md";
+import { AiFillPlusSquare } from "react-icons/ai";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -451,6 +452,7 @@ const WalletModal = (props) => {
   const [bankAccounts, setBankAccounts] = useState([]);
   const [accountsLoading, setAccountsLoading] = useState(false);
 
+  const navigate = useNavigate();
   const fetchBankAccounts = async () => {
     setAccountsLoading(true);
     await axios
@@ -565,6 +567,7 @@ const WalletModal = (props) => {
                               title: "Withdrawal Successful",
                               status: "success",
                             });
+                            props.refresh();
                           })
                           .catch(function (error) {
                             console.log(error);
@@ -578,95 +581,160 @@ const WalletModal = (props) => {
                     })}
                     style={{ width: "100%" }}
                   >
-                    <VStack gap={"20px"}>
-                      <VStack gap={"20px"} width={"full"}>
-                        <VStack width={"full"} alignItems={"flex-start"}>
-                          <Text
-                            fontSize={"xs"}
-                            fontWeight={"semibold"}
-                            color={"gray.600"}
-                          >
-                            NGN Amount
-                          </Text>
-                          <NumericFormat
-                            placeholder="Amount"
-                            required
-                            allowLeadingZeros
-                            thousandSeparator=","
-                            style={{
-                              width: "100%",
-                              outline: "2px solid transparent",
-                              border: "1px solid #e2e8f0",
-                              padding: "6px 14px",
-                              borderRadius: "5px",
-                            }}
-                            onChange={(e) => {
-                              let amount = e.target.value;
-                              let toFloatAmount;
-                              toFloatAmount = parseFloat(
-                                amount.replaceAll(",", "")
-                              ).toFixed(7);
-                              if (props.network === "naira") {
-                                let coinErrors = [];
-                                if (toFloatAmount < 5) {
-                                  coinErrors.push("Minimum withdrawal is 5  ");
-                                  setErrors(coinErrors);
-                                } else {
-                                  setErrors([]);
-                                  setFloatAmount(toFloatAmount.toString());
+                    {bankAccounts.length > 0 ? (
+                      <VStack gap={"20px"}>
+                        <VStack gap={"20px"} width={"full"}>
+                          <VStack width={"full"} alignItems={"flex-start"}>
+                            <Text
+                              fontSize={"xs"}
+                              fontWeight={"semibold"}
+                              color={"gray.600"}
+                            >
+                              NGN Amount
+                            </Text>
+                            <NumericFormat
+                              placeholder="Amount"
+                              required
+                              allowLeadingZeros
+                              thousandSeparator=","
+                              style={{
+                                width: "100%",
+                                outline: "2px solid transparent",
+                                border: "1px solid #e2e8f0",
+                                padding: "6px 14px",
+                                borderRadius: "5px",
+                              }}
+                              onChange={(e) => {
+                                let amount = e.target.value;
+                                let toFloatAmount;
+                                toFloatAmount = parseFloat(
+                                  amount.replaceAll(",", "")
+                                ).toFixed(7);
+                                if (props.network === "naira") {
+                                  let coinErrors = [];
+                                  if (toFloatAmount < 5) {
+                                    coinErrors.push(
+                                      "Minimum withdrawal is 5  "
+                                    );
+                                    setErrors(coinErrors);
+                                  } else {
+                                    setErrors([]);
+                                    setFloatAmount(toFloatAmount.toString());
+                                  }
                                 }
-                              }
+                              }}
+                            />
+                          </VStack>
+
+                          <VStack width={"full"} alignItems={"flex-start"}>
+                            <Text
+                              fontSize={"xs"}
+                              fontWeight={"semibold"}
+                              color={"gray.600"}
+                            >
+                              Select Bank Account
+                            </Text>
+                            <Box width={"full"} textAlign={"left"}>
+                              <Select
+                                bg={"#fff"}
+                                borderRadius={"md"}
+                                name="account_number"
+                                {...register("account_number")}
+                              >
+                                {bankAccounts.map((bankAccount, id) => {
+                                  return (
+                                    <option
+                                      key={id}
+                                      value={`${bankAccount.account_number}`}
+                                    >
+                                      {bankAccount.label}
+                                    </option>
+                                  );
+                                })}
+                              </Select>
+                            </Box>
+                            <Box height={"10px"}></Box>
+                            <HStack
+                              width={"full"}
+                              border={"1px solid"}
+                              borderColor={"gray.300"}
+                              justifyContent={"space-between"}
+                              alignItems={"center"}
+                              padding={"10px"}
+                              borderRadius={"xl"}
+                              cursor={"pointer"}
+                              onClick={() => {
+                                navigate("/setting/payout");
+                              }}
+                            >
+                              <Text
+                                pl={"10px"}
+                                lineHeight={"100%"}
+                                color={"gray.600"}
+                                fontSize={"sm"}
+                                fontWeight={"medium"}
+                                borderLeft={"2px solid #477FEB "}
+                              >
+                                Add another bank
+                              </Text>
+                              <AiFillPlusSquare
+                                color={"#103D96"}
+                                fontSize={"24px"}
+                                cursor={"pointer"}
+                              />
+                            </HStack>
+                            <Box textAlign={"left"}>
+                              {errors.length > 0 && (
+                                <Text my={"2"} color={"red"} fontSize={"xs"}>
+                                  {errors[0]}
+                                </Text>
+                              )}
+                            </Box>
+                          </VStack>
+                        </VStack>
+                        <Button
+                          width={"full"}
+                          isLoading={isLoading}
+                          type="Submit"
+                        >
+                          {" "}
+                          Withdraw
+                        </Button>
+                      </VStack>
+                    ) : (
+                      <VStack>
+                        <Text fontSize={"md"} color={"gray.700"}>
+                          You don't have a payment method. Please set one
+                        </Text>
+                        <HStack
+                          width={"full"}
+                          border={"1px solid"}
+                          borderColor={"gray.300"}
+                          justifyContent={"space-between"}
+                          alignItems={"center"}
+                          padding={"20px"}
+                          borderRadius={"xl"}
+                        >
+                          <Text
+                            pl={"10px"}
+                            lineHeight={"100%"}
+                            color={"gray.600"}
+                            fontWeight={"semibold"}
+                            borderLeft={"2px solid #477FEB "}
+                          >
+                            Bank Transfer
+                          </Text>
+                          <AiFillPlusSquare
+                            color={"#103D96"}
+                            fontSize={"24px"}
+                            cursor={"pointer"}
+                            onClick={() => {
+                              navigate("/setting/payout");
                             }}
                           />
-                        </VStack>
-
-                        <VStack width={"full"} alignItems={"flex-start"}>
-                          <Text
-                            fontSize={"xs"}
-                            fontWeight={"semibold"}
-                            color={"gray.600"}
-                          >
-                            Select Bank Account
-                          </Text>
-                          <Box width={"full"} textAlign={"left"}>
-                            <Select
-                              bg={"#fff"}
-                              borderRadius={"md"}
-                              name="account_number"
-                              {...register("account_number")}
-                            >
-                              {bankAccounts.map((bankAccount, id) => {
-                                return (
-                                  <option
-                                    key={id}
-                                    value={`${bankAccount.account_number}`}
-                                  >
-                                    {bankAccount.label}
-                                  </option>
-                                );
-                              })}
-                            </Select>
-                          </Box>
-
-                          <Box textAlign={"left"}>
-                            {errors.length > 0 && (
-                              <Text my={"2"} color={"red"} fontSize={"xs"}>
-                                {errors[0]}
-                              </Text>
-                            )}
-                          </Box>
-                        </VStack>
+                        </HStack>
                       </VStack>
-
-                      <Button
-                        width={"full"}
-                        isLoading={isLoading}
-                        type="Submit"
-                      >
-                        {" "}
-                        Withdraw
-                      </Button>
-                    </VStack>
+                    )}
                   </form>
                 ) : (
                   ""
