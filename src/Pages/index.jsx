@@ -23,6 +23,11 @@ import { motion } from "framer-motion";
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RxHamburgerMenu, RxCross1, RxCaretRight } from "react-icons/rx";
+import {
+  AiFillFacebook,
+  AiFillLinkedin,
+  AiFillTwitterSquare,
+} from "react-icons/ai";
 
 const animationKeyframes = keyframes`
   0% {
@@ -835,6 +840,20 @@ const Home = () => {
                 <Link>FAQ</Link>
                 <Link>About Us</Link>
                 <Link to={"/contact-us"}>Contact Us</Link>
+              </VStack>
+              <VStack width={"full"} alignItems={"center"}>
+                <Text fontSize={["16px", "16px", "24px"]} fontWeight={"700"}>
+                  Socials
+                </Text>
+                <a href={"https://twitter.com/BitGifty"}>
+                  <AiFillTwitterSquare fontSize={"24px"} />
+                </a>
+                <a href={"https://www.instagram.com/bitgifty/"}>
+                  <AiFillFacebook fontSize={"24px"} />
+                </a>
+                <a href={"https://www.linkedin.com/company/bitgifty/"}>
+                  <AiFillLinkedin fontSize={"24px"} />
+                </a>
               </VStack>
             </HStack>
           </HStack>

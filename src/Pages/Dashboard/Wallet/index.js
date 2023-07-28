@@ -51,9 +51,9 @@ function Wallet() {
   //   `https://api.tatum.io/v3/tatum/rate/CELO`,
   //   `https://api.tatum.io/v3/tatum/rate/USDT`,
   // ];
-  // const options = {
-  //   headers: { "x-api-key": "b04e15d2-f32b-4c6b-a4d5-20c203c7cf80" },
-  // };
+  const options = {
+    headers: { "x-api-key": "b04e15d2-f32b-4c6b-a4d5-20c203c7cf80" },
+  };
   // const fetchRates = async () => {
   //   await axios
   //     .all([
@@ -89,7 +89,7 @@ function Wallet() {
   //       setRates(...rates, usdValue);
   //     });
   // };
-  const data = {
+  const chartData = {
     labels: ["BTC", "ETH", "BNB", "CELO", "USDT", "CUSD"],
     datasets: [
       {
@@ -126,7 +126,7 @@ function Wallet() {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
       })
-      .then(function (response) {
+      .then(async function (response) {
         const entries = Object.entries(response.data);
         if (response.data) {
           setIsLoading(false);
@@ -140,18 +140,28 @@ function Wallet() {
           for (let index = 0; index < entries.length; index++) {
             const coinWallet = entries[index];
             if (coinWallet[0] === "Bitcoin") {
+              const balance =
+                coinWallet[1].info.incoming - coinWallet[1].info.outgoing;
+              const btcInDollar = await BalanceToDollar(`BTC`, balance);
               balances.push({
-                BTC: coinWallet[1].info.incoming - coinWallet[1].info.outgoing,
+                BTC: btcInDollar,
               });
             } else if (coinWallet[0] === "Bnb") {
               balances.push({ BNB: 0 });
             } else if (coinWallet[0] === "Celo") {
-              balances.push({ CELO: coinWallet[1].info.celo });
+              const balance = coinWallet[1].info.celo;
+              const celoInDollar = await BalanceToDollar(`CELO`, balance);
+              balances.push({ CELO: celoInDollar });
             } else if (coinWallet[0] === "Ethereum") {
-              balances.push({ ETH: coinWallet[1].info.balance });
+              const balance = coinWallet[1].info.balance;
+              const ethInDollar = await BalanceToDollar(`CELO`, balance);
+              balances.push({ ETH: ethInDollar });
             } else if (coinWallet[0] === "Tron") {
-              balances.push({ TRON: coinWallet[1].info.balance / 1000000 });
+              const balance = coinWallet[1].info.balance / 1000000;
+              const trxInDollar = await BalanceToDollar(`TRON`, balance);
+              balances.push({ TRX: trxInDollar });
             }
+            console.log(balances);
           }
         }
       })
@@ -159,9 +169,22 @@ function Wallet() {
   };
   useEffect(() => {
     fetchWallets();
-    // fetchRates();
   }, []);
-  console.table(rates);
+
+  const BalanceToDollar = async (coin, balance) => {
+    let rate;
+    await axios
+      .get(`https://api.tatum.io/v3/tatum/rate/${coin}?basePair=USD`, options)
+      .then((response) => {
+        console.log(response.data);
+        rate = response.data.value;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    return parseFloat(balance) * parseFloat(rate);
+  };
   return (
     <DashboardLayout>
       <VStack gap={"10"} width="full" scrollBehavior={"smooth"}>
@@ -202,7 +225,7 @@ function Wallet() {
                   fontWeight={"900"}
                   color={"whiteAlpha.900"}
                 >
-                  0 CUSD
+                  0 cUSD
                 </Text>
                 <Text
                   color={"whiteAlpha.800"}
@@ -214,7 +237,7 @@ function Wallet() {
               </VStack>
               <Box width={"150px"}>
                 {" "}
-                <Doughnut options={chartOptions} data={data} />
+                <Doughnut options={chartOptions} data={chartData} />
               </Box>
             </HStack>
           </VStack>
@@ -475,6 +498,26 @@ const WalletModal = (props) => {
       .catch((error) => {
         setAccountsLoading(false);
       });
+  };
+  const [exchangeRate, setExchangeRate] = useState();
+  const fetchNairaRate = async (coin) => {
+    let rate;
+    setIsLoading(true);
+    await axios
+      .get(`${process.env.REACT_APP_BASE_URL}swap/naira/${coin}`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((response) => {
+        setIsLoading(false);
+        console.log(response);
+        rate = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return rate;
   };
 
   useEffect(() => {
@@ -1032,12 +1075,19 @@ const WalletModal = (props) => {
                               borderRadius: "5px",
                               fontSize: "22px",
                             }}
-                            onChange={(e) => {
+                            onChange={async (e) => {
                               let amount = e.target.value;
                               let toFloatAmount;
+                              const rate = await fetchNairaRate(
+                                props.network.toLowerCase()
+                              );
+
                               toFloatAmount = parseFloat(
                                 amount.replaceAll(",", "")
                               ).toFixed(7);
+
+                              //  setExchangeRate(rate * toFloatAmount);
+                              setExchangeRate(toFloatAmount * rate);
                               let balanceError = [];
                               if (toFloatAmount > props.balance) {
                                 balanceError.push("Insufficient balance");
@@ -1159,7 +1209,7 @@ const WalletModal = (props) => {
                             <option value={`naira`}>NGN</option>
                           </Select>
                           <NumericFormat
-                            value={floatAmount * 450}
+                            value={exchangeRate}
                             placeholder="0.00"
                             required
                             allowLeadingZeros
