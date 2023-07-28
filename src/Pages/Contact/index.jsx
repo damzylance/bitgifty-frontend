@@ -13,6 +13,11 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
+import {
+  AiFillFacebook,
+  AiFillLinkedin,
+  AiFillTwitterSquare,
+} from "react-icons/ai";
 import { RxCaretRight, RxCross1, RxHamburgerMenu } from "react-icons/rx";
 import { Link, useNavigate } from "react-router-dom";
 const navHoverStyle = {
@@ -149,12 +154,12 @@ const ContactUs = () => {
               display={["none", "none", "flex", "flex"]}
               alignItems={"cener"}
             >
-              <Box>
+              <Link to={"/"}>
                 <Image
                   width={"150px"}
                   src="/assets/images/logo-inline-whitebg.png"
                 />
-              </Box>
+              </Link>
               <HStack gap={"20px"} alignItems={"center"}>
                 <Text
                   onClick={() => {
@@ -296,6 +301,20 @@ const ContactUs = () => {
                 <Link>FAQ</Link>
                 <Link>About Us</Link>
                 <Link to={"/contact-us"}>Contact Us</Link>
+              </VStack>
+              <VStack width={"full"} alignItems={"center"}>
+                <Text fontSize={["16px", "16px", "24px"]} fontWeight={"700"}>
+                  Socials
+                </Text>
+                <a href={"https://twitter.com/BitGifty"}>
+                  <AiFillTwitterSquare fontSize={"24px"} />
+                </a>
+                <a href={"https://www.instagram.com/bitgifty/"}>
+                  <AiFillFacebook fontSize={"24px"} />
+                </a>
+                <a href={"https://www.linkedin.com/company/bitgifty/"}>
+                  <AiFillLinkedin fontSize={"24px"} />
+                </a>
               </VStack>
             </HStack>
           </HStack>
