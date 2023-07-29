@@ -43,60 +43,18 @@ const chartOptions = {
 };
 
 function Wallet() {
-  const [rates, setRates] = useState([]);
-  const balances = [];
-  // const [walletBalances, setWalletBalances] = useState([]);
-  // let urls = [
-  //   `https://api.tatum.io/v3/tatum/rate/BTC`,
-  //   `https://api.tatum.io/v3/tatum/rate/CELO`,
-  //   `https://api.tatum.io/v3/tatum/rate/USDT`,
-  // ];
   const options = {
     headers: { "x-api-key": "b04e15d2-f32b-4c6b-a4d5-20c203c7cf80" },
   };
-  // const fetchRates = async () => {
-  //   await axios
-  //     .all([
-  //       axios.get(
-  //         "https://api.tatum.io/v3/tatum/rate/BTC?basePair=USD",
-  //         options
-  //       ),
-  //       axios.get(
-  //         "https://api.tatum.io/v3/tatum/rate/CELO?basePair=USD",
-  //         options
-  //       ),
-  //       axios.get(
-  //         "https://api.tatum.io/v3/tatum/rate/USDT?basePair=USD",
-  //         options
-  //       ),
-  //     ])
-  //     .then(
-  //       axios.spread(async (data1, data2, data3) => {
-  //         const toFloat = (item) => {
-  //           parseFloat(item);
-  //         };
-  //         // output of req.
-  //         setRates([data1.data.value, data2.data.value, data3.data.value]);
-  //       })
-  //     );
-  // };
 
-  // const dollarBalance = async (coin) => {
-  //   await axios
-  //     .get(`https://api.tatum.io/v3/tatum/rate/${coin}`, options)
-  //     .then((response) => {
-  //       const usdValue = response.data.value;
-  //       setRates(...rates, usdValue);
-  //     });
-  // };
-  const chartData = {
-    labels: ["BTC", "ETH", "BNB", "CELO", "USDT", "CUSD"],
+  const [chartData, setChartData] = useState({
+    labels: [],
     datasets: [
       {
         label: "# of Votes",
-        data: [12, 19, 3, 5, 2, 3],
+        data: [],
         backgroundColor: [
-          "rgba(255, 255, 251, 0.8)",
+          "rgba(255, 255, 251, 0.2)",
           "rgba(54, 162, 235, 0.2)",
           "rgba(255, 206, 86, 0.2)",
           "rgba(75, 192, 192, 0.2)",
@@ -114,10 +72,11 @@ function Wallet() {
         borderWidth: 1,
       },
     ],
-  };
+  });
   const [wallets, setWallets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fiatWallets, setFiatWallets] = useState([]);
+  const [totalInDollars, setTotalInDollars] = useState(0);
 
   const fetchWallets = async () => {
     await axios
@@ -136,32 +95,78 @@ function Wallet() {
               return element[1].type === "fiat";
             })
           );
-
+          const labels = [];
+          const balances = [];
+          let sum = 0;
           for (let index = 0; index < entries.length; index++) {
             const coinWallet = entries[index];
             if (coinWallet[0] === "Bitcoin") {
               const balance =
                 coinWallet[1].info.incoming - coinWallet[1].info.outgoing;
               const btcInDollar = await BalanceToDollar(`BTC`, balance);
-              balances.push({
-                BTC: btcInDollar,
-              });
+              sum += btcInDollar;
+              balances.push(btcInDollar);
+              labels.push("BTC");
             } else if (coinWallet[0] === "Bnb") {
-              balances.push({ BNB: 0 });
+              sum += 0;
+              balances.push(0);
+              labels.push("BNB");
             } else if (coinWallet[0] === "Celo") {
               const balance = coinWallet[1].info.celo;
+
               const celoInDollar = await BalanceToDollar(`CELO`, balance);
-              balances.push({ CELO: celoInDollar });
+              sum += celoInDollar;
+              balances.push(celoInDollar);
+              labels.push("CELO");
             } else if (coinWallet[0] === "Ethereum") {
               const balance = coinWallet[1].info.balance;
-              const ethInDollar = await BalanceToDollar(`CELO`, balance);
-              balances.push({ ETH: ethInDollar });
+              const ethInDollar = await BalanceToDollar(
+                `ETH`,
+                isNaN(balance) ? 0 : balance
+              );
+              sum += ethInDollar;
+              balances.push(ethInDollar);
+              labels.push("ETH");
             } else if (coinWallet[0] === "Tron") {
               const balance = coinWallet[1].info.balance / 1000000;
               const trxInDollar = await BalanceToDollar(`TRON`, balance);
-              balances.push({ TRX: trxInDollar });
+              sum += trxInDollar;
+              balances.push(trxInDollar);
+              labels.push("TRON");
+            } else if (coinWallet[0] === "naira") {
+              const balance = Math.round(coinWallet[1].balance) / 850;
+              sum += balance;
+              balances.push(balance);
+              labels.push("NGN");
             }
-            console.log(balances);
+
+            setTotalInDollars(sum.toFixed(2));
+            setChartData({
+              labels: labels,
+              datasets: [
+                {
+                  label: "Balance",
+                  data: balances,
+                  backgroundColor: [
+                    "#492b7c",
+                    "#ff8600",
+                    "#fff",
+                    "#f8a6e4",
+                    "#6A6BD5",
+                    "#624CAB",
+                  ],
+                  borderColor: [
+                    "rgba(255, 99, 132, 1)",
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(75, 192, 192, 1)",
+                    "rgba(153, 102, 255, 1)",
+                    "rgba(255, 159, 64, 1)",
+                  ],
+                  borderWidth: 1,
+                },
+              ],
+            });
           }
         }
       })
@@ -176,12 +181,9 @@ function Wallet() {
     await axios
       .get(`https://api.tatum.io/v3/tatum/rate/${coin}?basePair=USD`, options)
       .then((response) => {
-        console.log(response.data);
         rate = response.data.value;
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
 
     return parseFloat(balance) * parseFloat(rate);
   };
@@ -189,7 +191,7 @@ function Wallet() {
     <DashboardLayout>
       <VStack gap={"10"} width="full" scrollBehavior={"smooth"}>
         <Container
-          background={"brand.600"}
+          background={"#202f44"}
           py={"4"}
           border={"1px solid #A3BFF5"}
           borderRadius={"12px"}
@@ -225,14 +227,14 @@ function Wallet() {
                   fontWeight={"900"}
                   color={"whiteAlpha.900"}
                 >
-                  0 cUSD
+                  {totalInDollars} cUSD
                 </Text>
                 <Text
                   color={"whiteAlpha.800"}
                   fontSize={"2xl"}
                   fontWeight={"900"}
                 >
-                  $0
+                  ${totalInDollars}
                 </Text>
               </VStack>
               <Box width={"150px"}>
@@ -291,7 +293,7 @@ function Wallet() {
                     .map((wallet, index) => {
                       // const { address, network } = wallet;
                       const coinWallet = wallet;
-                      const balance = coinWallet[1].balance;
+                      const balance = Math.floor(coinWallet[1].balance);
 
                       return (
                         <CoinRow
@@ -344,7 +346,6 @@ function Wallet() {
                         balance =
                           coinWallet[1].info.incoming -
                           coinWallet[1].info.outgoing;
-                        balances.push({ bitcoin: balance });
                       } else if (coinWallet[0] === "Bnb") {
                         balance = 0;
                       } else if (coinWallet[0] === "Celo") {
@@ -354,7 +355,7 @@ function Wallet() {
                       } else if (coinWallet[0] === "Tron") {
                         balance = coinWallet[1].info.balance / 1000000;
                       } else if (coinWallet[0] === "naira") {
-                        balance = coinWallet[1].balance;
+                        balance = Math.round(coinWallet[1].balance);
                       }
                       return (
                         <CoinRow
@@ -511,12 +512,9 @@ const WalletModal = (props) => {
       })
       .then((response) => {
         setIsLoading(false);
-        console.log(response);
         rate = response.data;
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
     return rate;
   };
 
@@ -588,7 +586,6 @@ const WalletModal = (props) => {
                     onSubmit={handleSubmit(async (data) => {
                       data.amount = floatAmount;
                       data.network = props.network;
-                      console.log(data);
                       if (errors.length > 0) {
                       } else {
                         setIsLoading(true);
@@ -613,7 +610,6 @@ const WalletModal = (props) => {
                             props.refresh();
                           })
                           .catch(function (error) {
-                            console.log(error);
                             setIsLoading(false);
                             toast({
                               title: "An error occured",
@@ -856,7 +852,6 @@ const WalletModal = (props) => {
                               let btcErrors = [];
 
                               if (toFloatAmount < 0.0005) {
-                                alert();
                                 btcErrors.push("Minimum withdrawal is 0.0005 ");
                                 setErrors(btcErrors);
                               } else {
@@ -1087,7 +1082,7 @@ const WalletModal = (props) => {
                               ).toFixed(7);
 
                               //  setExchangeRate(rate * toFloatAmount);
-                              setExchangeRate(toFloatAmount * rate);
+                              setExchangeRate(Math.round(toFloatAmount * rate));
                               let balanceError = [];
                               if (toFloatAmount > props.balance) {
                                 balanceError.push("Insufficient balance");
@@ -1096,9 +1091,7 @@ const WalletModal = (props) => {
                                 if (props.network === "Bitcoin") {
                                   let btcErrors = [];
 
-                                  console.log("error", toFloatAmount);
                                   if (toFloatAmount < 0.0005) {
-                                    alert();
                                     btcErrors.push("Minimum amount is 0.0005 ");
                                     setErrors(btcErrors);
                                   } else {
@@ -1110,7 +1103,6 @@ const WalletModal = (props) => {
                                   if (toFloatAmount < 2) {
                                     coinErrors.push("Minimum amount is 2");
                                     setErrors(coinErrors);
-                                    console.log(coinErrors);
                                   } else {
                                     setErrors([]);
                                     setFloatAmount(toFloatAmount.toString());
@@ -1121,7 +1113,6 @@ const WalletModal = (props) => {
                                   if (toFloatAmount < 2) {
                                     coinErrors.push("Minimum amount is 2  ");
                                     setErrors(coinErrors);
-                                    console.log(coinErrors);
                                   } else {
                                     setErrors([]);
                                     setFloatAmount(toFloatAmount.toString());
@@ -1133,7 +1124,6 @@ const WalletModal = (props) => {
                                       "Minimum withdrawal is 0.002  "
                                     );
                                     setErrors(coinErrors);
-                                    console.log(coinErrors);
                                   } else {
                                     setErrors([]);
                                     setFloatAmount(toFloatAmount);
@@ -1145,7 +1135,6 @@ const WalletModal = (props) => {
                                       "Minimum withdrawal is 0.001  "
                                     );
                                     setErrors(coinErrors);
-                                    console.log(coinErrors);
                                   } else {
                                     setErrors([]);
                                     setFloatAmount(toFloatAmount.toString());
