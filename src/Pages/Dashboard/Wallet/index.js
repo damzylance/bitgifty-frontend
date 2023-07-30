@@ -1169,7 +1169,7 @@ const WalletModal = (props) => {
                                 } else if (props.network === "Celo") {
                                   let coinErrors = [];
                                   if (toFloatAmount < 1) {
-                                    coinErrors.push("Minimum amount is 2");
+                                    coinErrors.push("Minimum amount is 1");
                                     setErrors(coinErrors);
                                   } else {
                                     setErrors([]);
