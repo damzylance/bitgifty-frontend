@@ -32,7 +32,7 @@ const SwapHistory = () => {
         <VStack width={"full"}>
           <Box
             width={"full"}
-            visibility={["visible", "visible", "visible", "hidden"]}
+            visibility={["visible", "visible", "visible", "visible"]}
           >
             <Text textAlign={"center"}> Swap History</Text>
           </Box>
@@ -44,7 +44,7 @@ const SwapHistory = () => {
             px={"2"}
             color={"brand.bg1"}
             borderRadius={"md"}
-            display={["none", "none", "none", "flex"]}
+            display={["flex", "flex", "flex", "flex"]}
           >
             <Text fontSize={["xs", "xs", "sm", "sm"]} flex={2}>
               Time
@@ -68,7 +68,7 @@ const SwapHistory = () => {
             </Text>
           </Flex>
           <VStack width={"full"}>
-            {transactions[3][1].length > 0 ? (
+            {transactions.length > 0 ? (
               transactions[3][1].map((transaction) => {
                 return (
                   <TransactionRow
@@ -103,7 +103,7 @@ function TransactionRow(props) {
       justifyContent={"space-between"}
       alignItems={"center"}
       wrap="wrap"
-      display={["none", "none", "none", "flex"]}
+      display={["flex", "flex", "flex", "flex"]}
       sx={{
         animation: "drop-in 1200ms ease 500ms backwards",
       }}
