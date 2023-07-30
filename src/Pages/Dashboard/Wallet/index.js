@@ -103,7 +103,10 @@ function Wallet() {
             if (coinWallet[0] === "Bitcoin") {
               const balance =
                 coinWallet[1].info.incoming - coinWallet[1].info.outgoing;
-              const btcInDollar = await BalanceToDollar(`BTC`, balance);
+              const btcInDollar = await BalanceToDollar(
+                `BTC`,
+                isNaN(balance) ? 0 : balance
+              );
               sum += btcInDollar;
               balances.push(btcInDollar);
               labels.push("BTC");
@@ -114,7 +117,10 @@ function Wallet() {
             } else if (coinWallet[0] === "Celo") {
               const balance = coinWallet[1].info.celo;
 
-              const celoInDollar = await BalanceToDollar(`CELO`, balance);
+              const celoInDollar = await BalanceToDollar(
+                `CELO`,
+                isNaN(balance) ? 0 : balance
+              );
               sum += celoInDollar;
               balances.push(celoInDollar);
               labels.push("CELO");
@@ -129,13 +135,16 @@ function Wallet() {
               labels.push("ETH");
             } else if (coinWallet[0] === "Tron") {
               const balance = coinWallet[1].info.balance / 1000000;
-              const trxInDollar = await BalanceToDollar(`TRON`, balance);
+              const trxInDollar = await BalanceToDollar(
+                `TRON`,
+                isNaN(balance) ? 0 : balance
+              );
               sum += trxInDollar;
               balances.push(trxInDollar);
               labels.push("TRON");
             } else if (coinWallet[0] === "naira") {
               const balance = Math.round(coinWallet[1].balance) / 850;
-              sum += balance;
+              sum += isNaN(balance) ? 0 : balance;
               balances.push(balance);
               labels.push("NGN");
             }
@@ -445,7 +454,6 @@ function CoinRow(props) {
         <Button
           onClick={() => {
             if (props.type === "fiat") {
-              alert(props.type);
               navigate(`/fiat-history/`);
             } else {
               navigate(`/coin-details/${props.currency.toLowerCase()}`);
