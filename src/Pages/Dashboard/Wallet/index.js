@@ -1062,10 +1062,21 @@ const WalletModal = (props) => {
                         .catch(function (error) {
                           console.log(error);
                           setIsLoading(false);
-                          toast({
-                            title: "An error occured",
-                            status: "warning",
-                          });
+                          if (
+                            error.response.data.error.includes(
+                              "Insufficient funds"
+                            )
+                          ) {
+                            toast({
+                              title: "insufficient funds",
+                              status: "warning",
+                            });
+                          } else {
+                            toast({
+                              title: "An error occured",
+                              status: "warning",
+                            });
+                          }
                         });
                     }
                   })}
