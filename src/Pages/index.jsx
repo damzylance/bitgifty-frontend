@@ -224,9 +224,19 @@ const Home = () => {
                 <Button
                   onClick={() => navigate("/login")}
                   background={"brand.700"}
-                  size={"lg"}
                 >
                   Login
+                </Button>
+                <Button
+                  onClick={() => navigate("/register")}
+                  background={"#fff"}
+                  color={"brand.700"}
+                  borderColor={"brand.700"}
+                  borderWidth={"1px"}
+                  borderStyle={"solid"}
+                  _hover={{ color: "brand.700" }}
+                >
+                  SignUp
                 </Button>
                 {/* <Text fontSize={"64px"} fontWeight={700}>
                   SEND THE GIFT OF CRYPTO WITH EASE

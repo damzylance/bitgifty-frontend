@@ -21,10 +21,11 @@ import {
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 function Create() {
   const [wallets, setWallets] = useState([]);
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -187,6 +188,7 @@ function Create() {
         setTimeout(() => {
           setConfitti(false);
         }, 5000);
+        navigate("cards");
       })
       .catch(function (error) {
         if (error.response?.status === 400) {

@@ -444,7 +444,12 @@ function CoinRow(props) {
         </Button>
         <Button
           onClick={() => {
-            navigate(`/coin-details/${props.currency.toLowerCase()}`);
+            if (props.type === "fiat") {
+              alert(props.type);
+              navigate(`/fiat-history/`);
+            } else {
+              navigate(`/coin-details/${props.currency.toLowerCase()}`);
+            }
           }}
           variant={"outline"}
         >
@@ -673,7 +678,6 @@ const WalletModal = (props) => {
                                 fontWeight={"semibold"}
                                 cursor={"pointer"}
                                 onClick={() => {
-                                  alert(withdrawAmount);
                                   setWithdrawAmount(props.balance);
                                 }}
                               >
@@ -939,7 +943,6 @@ const WalletModal = (props) => {
                             cursor={"pointer"}
                             mt={"5px"}
                             onClick={() => {
-                              alert(withdrawAmount);
                               setWithdrawAmount(props.balance);
                             }}
                           >
