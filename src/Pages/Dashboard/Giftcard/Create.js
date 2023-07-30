@@ -187,8 +187,8 @@ function Create() {
         setConfitti(true);
         setTimeout(() => {
           setConfitti(false);
-        }, 3000);
-        navigate("/cards");
+        }, 5000);
+        navigate("/giftcard/cards");
       })
       .catch(function (error) {
         if (error.response?.status === 400) {

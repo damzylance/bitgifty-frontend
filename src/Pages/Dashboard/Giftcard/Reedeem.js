@@ -54,7 +54,7 @@ function Reedeem() {
         setTimeout(() => {
           setConfitti(false);
           navigate("/wallet");
-        }, 3000);
+        }, 5000);
       })
       .catch(function (error) {
         console.log(error.response);

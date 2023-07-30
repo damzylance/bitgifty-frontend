@@ -597,7 +597,7 @@ const WalletModal = (props) => {
                 {props.type === "fiat" ? (
                   <form
                     onSubmit={handleSubmit(async (data) => {
-                      data.amount = floatAmount;
+                      data.amount = withdrawAmount;
                       data.network = props.network;
                       if (errors.length > 0) {
                       } else {
@@ -623,6 +623,9 @@ const WalletModal = (props) => {
                             props.refresh();
                           })
                           .catch(function (error) {
+                            console.log(error);
+                            console.log(floatAmount);
+                            console.log(withdrawAmount);
                             setIsLoading(false);
                             toast({
                               title: "An error occured",
@@ -648,7 +651,6 @@ const WalletModal = (props) => {
                               value={withdrawAmount}
                               placeholder="Amount"
                               required
-                              allowLeadingZeros
                               thousandSeparator=","
                               style={{
                                 width: "100%",
@@ -663,17 +665,30 @@ const WalletModal = (props) => {
                                 let toFloatAmount;
                                 toFloatAmount = parseFloat(
                                   amount.replaceAll(",", "")
-                                ).toFixed(7);
+                                );
                                 if (props.network === "naira") {
                                   let coinErrors = [];
-                                  if (toFloatAmount < 5) {
-                                    coinErrors.push(
-                                      "Minimum withdrawal is 5  "
-                                    );
-                                    setErrors(coinErrors);
+                                  if (toFloatAmount > props.balance) {
+                                    coinErrors.push("Insufficient Balance");
                                   } else {
-                                    setErrors([]);
-                                    setFloatAmount(toFloatAmount.toString());
+                                    if (toFloatAmount < 5) {
+                                      coinErrors.push(
+                                        "Minimum withdrawal is 5  "
+                                      );
+                                      setErrors(coinErrors);
+                                    } else {
+                                      setErrors([]);
+                                      setFloatAmount(
+                                        isNaN(toFloatAmount.toString())
+                                          ? 0
+                                          : toFloatAmount
+                                      );
+                                      setWithdrawAmount(
+                                        isNaN(toFloatAmount.toString())
+                                          ? 0
+                                          : toFloatAmount
+                                      );
+                                    }
                                   }
                                 }
                               }}
@@ -810,6 +825,7 @@ const WalletModal = (props) => {
                 {props.type === "crypto" ? (
                   <form
                     onSubmit={handleSubmit(async (data) => {
+                      console.log(data);
                       data.amount = floatAmount;
                       data.network = props.network;
                       if (errors.length > 0) {
@@ -836,6 +852,7 @@ const WalletModal = (props) => {
                             props.refresh();
                           })
                           .catch(function (error) {
+                            console.log(error);
                             setIsLoading(false);
                             toast({
                               title: "An error occured",
@@ -1129,13 +1146,16 @@ const WalletModal = (props) => {
                                 amount.replaceAll(",", "")
                               ).toFixed(7);
 
-                              //  setExchangeRate(rate * toFloatAmount);
-                              setExchangeRate(Math.round(toFloatAmount * rate));
                               let balanceError = [];
-                              if (toFloatAmount > props.balance) {
+                              if (toFloatAmount > parseFloat(props.balance)) {
                                 balanceError.push("Insufficient balance");
+                                console.log(balanceError);
                                 setErrors(balanceError);
                               } else {
+                                //  setExchangeRate(rate * toFloatAmount);
+                                setExchangeRate(
+                                  Math.round(toFloatAmount * rate)
+                                );
                                 if (props.network === "Bitcoin") {
                                   let btcErrors = [];
 
@@ -1278,6 +1298,7 @@ const WalletModal = (props) => {
                       mt={"10px"}
                       size={"lg"}
                       isLoading={isLoading}
+                      disabled={errors.length > 0 ? true : false}
                       type="Submit"
                     >
                       Swap
