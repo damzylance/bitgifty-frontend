@@ -8,6 +8,7 @@ const Authenticate = (props) => {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState(false);
   const user = async () => {
+    localStorage.setItem("busStop", window.location.pathname);
     await axios
       .get(`${process.env.REACT_APP_BASE_URL}auth/user/`, {
         headers: {

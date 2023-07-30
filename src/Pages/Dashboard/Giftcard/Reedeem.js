@@ -12,7 +12,9 @@ import Confetti from "react-confetti";
 
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 function Reedeem() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -51,6 +53,7 @@ function Reedeem() {
         setConfitti(true);
         setTimeout(() => {
           setConfitti(false);
+          navigate("/wallet");
         }, 5000);
       })
       .catch(function (error) {

@@ -632,6 +632,7 @@ const WalletModal = (props) => {
                               NGN Amount
                             </Text>
                             <NumericFormat
+                              value={withdrawAmount}
                               placeholder="Amount"
                               required
                               allowLeadingZeros
@@ -645,6 +646,7 @@ const WalletModal = (props) => {
                               }}
                               onChange={(e) => {
                                 let amount = e.target.value;
+                                setWithdrawAmount(amount);
                                 let toFloatAmount;
                                 toFloatAmount = parseFloat(
                                   amount.replaceAll(",", "")
@@ -663,6 +665,21 @@ const WalletModal = (props) => {
                                 }
                               }}
                             />
+                            <HStack width={"full"} justifyContent={"flex-end"}>
+                              <Text
+                                color={"blackAlpha.500"}
+                                fontSize={"xs"}
+                                textDecoration={"underline"}
+                                fontWeight={"semibold"}
+                                cursor={"pointer"}
+                                onClick={() => {
+                                  alert(withdrawAmount);
+                                  setWithdrawAmount(props.balance);
+                                }}
+                              >
+                                MAX
+                              </Text>
+                            </HStack>
                           </VStack>
 
                           <VStack width={"full"} alignItems={"flex-start"}>
@@ -804,6 +821,7 @@ const WalletModal = (props) => {
                               title: "Withdrawal Successful",
                               status: "success",
                             });
+                            props.refresh();
                           })
                           .catch(function (error) {
                             setIsLoading(false);
@@ -844,6 +862,8 @@ const WalletModal = (props) => {
                           }}
                           onChange={(e) => {
                             let amount = e.target.value;
+                            setWithdrawAmount(amount);
+
                             let toFloatAmount;
                             toFloatAmount = parseFloat(
                               amount.replaceAll(",", "")
@@ -910,6 +930,22 @@ const WalletModal = (props) => {
                             }
                           }}
                         />
+                        <HStack width={"full"} justifyContent={"flex-end"}>
+                          <Text
+                            color={"blackAlpha.500"}
+                            fontSize={"xs"}
+                            textDecoration={"underline"}
+                            fontWeight={"semibold"}
+                            cursor={"pointer"}
+                            mt={"5px"}
+                            onClick={() => {
+                              alert(withdrawAmount);
+                              setWithdrawAmount(props.balance);
+                            }}
+                          >
+                            MAX
+                          </Text>
+                        </HStack>
                         <Box textAlign={"left"}>
                           {errors.length > 0 && (
                             <Text my={"2"} color={"red"} fontSize={"xs"}>
@@ -996,6 +1032,7 @@ const WalletModal = (props) => {
                           props.refresh();
                         })
                         .catch(function (error) {
+                          console.log(error);
                           setIsLoading(false);
                           toast({
                             title: "An error occured",

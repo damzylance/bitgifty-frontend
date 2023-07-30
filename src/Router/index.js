@@ -15,6 +15,7 @@ import Home from "../Pages";
 import Notfound from "../Pages/404";
 import ContactUs from "../Pages/Contact";
 import Payout from "../Pages/UserSetting/Payout";
+import SwapHistory from "../Pages/Dashboard/Wallet/SwapHistory";
 function Router() {
   return (
     <BrowserRouter>
@@ -43,6 +44,7 @@ function Router() {
         <Route exact path="/coin-details/:currency" element={<CoinDetails />} />
         <Route exact path="/history" element={<History />} />
         <Route exact path="/history" element={<History />} />
+        <Route exact path="/swap-history" element={<SwapHistory />} />
         <Route exact path="/setting" element={<UserSetting />} />
         <Route exact path="/setting/payout" element={<Payout />} />
         <Route path="/*" element={<Notfound />} />

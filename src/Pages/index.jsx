@@ -222,11 +222,11 @@ const Home = () => {
                   FAQ
                 </Text>
                 <Button
-                  onClick={() => navigate("/register")}
+                  onClick={() => navigate("/login")}
                   background={"brand.700"}
                   size={"lg"}
                 >
-                  Get Started
+                  Login
                 </Button>
                 {/* <Text fontSize={"64px"} fontWeight={700}>
                   SEND THE GIFT OF CRYPTO WITH EASE

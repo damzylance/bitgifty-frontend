@@ -36,7 +36,8 @@ function Login() {
         console.log(response);
         setIsLoading(false);
         toast({ title: "Login Successful", status: "success" });
-        navigate("/dashboard");
+        const busStop = localStorage.getItem("busStop");
+        navigate(busStop === "/giftcard/redeem" ? busStop : "/dashboard");
       })
       .catch(function (error) {
         if (error.response?.status === 400) {
