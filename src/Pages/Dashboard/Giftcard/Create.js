@@ -187,8 +187,8 @@ function Create() {
         setConfitti(true);
         setTimeout(() => {
           setConfitti(false);
-        }, 5000);
-        navigate("cards");
+        }, 3000);
+        navigate("/cards");
       })
       .catch(function (error) {
         if (error.response?.status === 400) {
@@ -391,7 +391,7 @@ function Create() {
             </FormControl>
 
             <Checkbox onChange={() => setCheckEmail(!checkEmail)}>
-              Send to receipent email
+              Send to receipient email
             </Checkbox>
             {checkEmail ? (
               <FormControl>
