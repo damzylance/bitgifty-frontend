@@ -530,6 +530,76 @@ const WalletModal = (props) => {
       .catch((error) => {});
     return rate;
   };
+  const SwapToNaira = async (data) => {
+    data.swap_amount = floatAmount;
+    data.swap_to = "naira";
+    data.swap_from = props.network;
+    if (errors.length > 0) {
+    } else {
+      setIsLoading(true);
+      await axios
+        .post(`${process.env.REACT_APP_BASE_URL}swap/`, data, {
+          headers: {
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+        })
+        .then(function (response) {
+          setIsLoading(false);
+          toast({
+            title: "Swap Successful",
+            status: "success",
+          });
+          props.refresh();
+        })
+        .catch(function (error) {
+          console.log(error);
+          setIsLoading(false);
+          if (error.response.data.error.includes("Insufficient funds")) {
+            toast({
+              title: "insufficient funds",
+              status: "warning",
+            });
+          } else {
+            toast({
+              title: "An error occured",
+              status: "warning",
+            });
+          }
+        });
+    }
+  };
+  const WithdrawFiat = async (data) => {
+    data.amount = withdrawAmount;
+    data.network = props.network;
+    if (errors.length > 0) {
+    } else {
+      setIsLoading(true);
+      await axios
+        .post(`${process.env.REACT_APP_BASE_URL}withdraw/`, data, {
+          headers: {
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+        })
+        .then(function (response) {
+          setIsLoading(false);
+          toast({
+            title: "Withdrawal Successful",
+            status: "success",
+          });
+          props.refresh();
+        })
+        .catch(function (error) {
+          console.log(error);
+          console.log(floatAmount);
+          console.log(withdrawAmount);
+          setIsLoading(false);
+          toast({
+            title: "An error occured",
+            status: "warning",
+          });
+        });
+    }
+  };
 
   useEffect(() => {
     if (props.type === "fiat") {
@@ -596,44 +666,7 @@ const WalletModal = (props) => {
               <Box width={"full"} textAlign={"center"} mt={"100px"}>
                 {props.type === "fiat" ? (
                   <form
-                    onSubmit={handleSubmit(async (data) => {
-                      data.amount = withdrawAmount;
-                      data.network = props.network;
-                      if (errors.length > 0) {
-                      } else {
-                        setIsLoading(true);
-                        await axios
-                          .post(
-                            `${process.env.REACT_APP_BASE_URL}withdraw/`,
-                            data,
-                            {
-                              headers: {
-                                Authorization: `Token ${localStorage.getItem(
-                                  "token"
-                                )}`,
-                              },
-                            }
-                          )
-                          .then(function (response) {
-                            setIsLoading(false);
-                            toast({
-                              title: "Withdrawal Successful",
-                              status: "success",
-                            });
-                            props.refresh();
-                          })
-                          .catch(function (error) {
-                            console.log(error);
-                            console.log(floatAmount);
-                            console.log(withdrawAmount);
-                            setIsLoading(false);
-                            toast({
-                              title: "An error occured",
-                              status: "warning",
-                            });
-                          });
-                      }
-                    })}
+                    onSubmit={handleSubmit(WithdrawFiat)}
                     style={{ width: "100%" }}
                   >
                     {bankAccounts.length > 0 ? (
@@ -1036,50 +1069,7 @@ const WalletModal = (props) => {
             <DrawerBody>
               <Box width={"full"} textAlign={"center"} mt={"100px"}>
                 <form
-                  onSubmit={handleSubmit(async (data) => {
-                    data.swap_amount = floatAmount;
-                    data.swap_to = "naira";
-                    data.swap_from = props.network;
-                    if (errors.length > 0) {
-                    } else {
-                      setIsLoading(true);
-                      await axios
-                        .post(`${process.env.REACT_APP_BASE_URL}swap/`, data, {
-                          headers: {
-                            Authorization: `Token ${localStorage.getItem(
-                              "token"
-                            )}`,
-                          },
-                        })
-                        .then(function (response) {
-                          setIsLoading(false);
-                          toast({
-                            title: "Swap Successful",
-                            status: "success",
-                          });
-                          props.refresh();
-                        })
-                        .catch(function (error) {
-                          console.log(error);
-                          setIsLoading(false);
-                          if (
-                            error.response.data.error.includes(
-                              "Insufficient funds"
-                            )
-                          ) {
-                            toast({
-                              title: "insufficient funds",
-                              status: "warning",
-                            });
-                          } else {
-                            toast({
-                              title: "An error occured",
-                              status: "warning",
-                            });
-                          }
-                        });
-                    }
-                  })}
+                  onSubmit={handleSubmit(SwapToNaira)}
                   style={{ width: "100%" }}
                 >
                   <VStack gap={"20px"}>
